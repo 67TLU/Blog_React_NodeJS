@@ -1,33 +1,102 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Clock, Share2, Bookmark } from "lucide-react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Clock, Share2, Bookmark, Check } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function ArticleCard({ article, variant = "default" }) {
+  const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const articleUrl = `/article/${article.slug || article.id}`;
+  const authorProfileUrl = `/author-profile/${article.authorId || 101}`;
+  const categoryUrl = `/category/${article.categorySlug || "tin-tuc"}`;
+
+  const handleBookmark = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsSaved(!isSaved);
+  };
+
+  const handleShare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const fullUrl = `${window.location.origin}${articleUrl}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleAuthorClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(authorProfileUrl);
+  };
+
+  const handleCategoryClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(categoryUrl);
+  };
 
   if (variant === "featured") {
     return (
-      <Link to={articleUrl} className="block h-full">
-        <Card className="relative overflow-hidden group cursor-pointer h-full border-none shadow-md">
+      <Link to={articleUrl} className="block h-full group">
+        <Card className="relative overflow-hidden rounded-xl h-full border border-border shadow-md bg-card">
           <img
             src={article.image}
             alt={article.title}
-            className="w-full h-[380px] object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[380px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-6 text-white">
-            <Badge className="w-fit mb-2 bg-red-600 hover:bg-red-700">{article.category}</Badge>
-            <h2 className="text-2xl font-bold line-clamp-2 mb-2 group-hover:underline">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex flex-col justify-end p-6 text-white">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge
+                onClick={handleCategoryClick}
+                className="w-fit bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-xs"
+              >
+                {article.category}
+              </Badge>
+              {article.readingTime && (
+                <span className="text-xs text-zinc-300 flex items-center gap-1 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full">
+                  <Clock className="w-3 h-3" /> {article.readingTime}
+                </span>
+              )}
+            </div>
+
+            <h2 className="text-2xl font-bold line-clamp-2 mb-2 group-hover:text-red-300 transition-colors">
               {article.title}
             </h2>
-            <p className="text-sm text-gray-200 line-clamp-2 mb-4">{article.excerpt}</p>
-            <div className="flex items-center gap-3 text-xs text-gray-300">
-              <span>{article.author}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {article.publishedAt}
+            <p className="text-sm text-zinc-300 line-clamp-2 mb-4 leading-relaxed">{article.excerpt}</p>
+
+            <div className="flex items-center justify-between text-xs text-zinc-300 pt-3 border-t border-white/20">
+              <span
+                onClick={handleAuthorClick}
+                className="hover:underline hover:text-white font-medium cursor-pointer"
+              >
+                Bởi {article.author}
               </span>
+              <div className="flex items-center gap-3">
+                <span>{article.publishedAt}</span>
+                <button
+                  type="button"
+                  onClick={handleBookmark}
+                  aria-label="Lưu bài viết"
+                  className="p-1 hover:text-red-400 transition-colors cursor-pointer"
+                >
+                  <Bookmark className={`w-4 h-4 ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  aria-label="Chia sẻ bài viết"
+                  className="p-1 hover:text-blue-400 transition-colors cursor-pointer"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
         </Card>
@@ -36,30 +105,57 @@ export default function ArticleCard({ article, variant = "default" }) {
   }
 
   return (
-    <Link to={articleUrl} className="block h-full">
-      <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow flex flex-col h-full border-zinc-800 bg-zinc-900 text-white">
-        <div className="relative h-44 overflow-hidden">
+    <Link to={articleUrl} className="block h-full group">
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full border-border bg-card text-card-foreground">
+        <div className="relative h-44 overflow-hidden bg-muted">
           <img
             src={article.image}
             alt={article.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <Badge className="absolute top-2 left-2 bg-black/60 backdrop-blur-md">
+          <Badge
+            onClick={handleCategoryClick}
+            className="absolute top-2.5 left-2.5 bg-background/80 hover:bg-background text-foreground backdrop-blur-md border border-border/50 text-[11px] cursor-pointer"
+          >
             {article.category}
           </Badge>
         </div>
         <CardContent className="p-4 flex flex-col flex-1 justify-between">
           <div>
-            <h3 className="font-semibold text-base line-clamp-2 group-hover:text-blue-400 transition-colors mb-2">
+            <h3 className="font-bold text-base line-clamp-2 group-hover:text-primary transition-colors mb-2 leading-snug">
               {article.title}
             </h3>
-            <p className="text-xs text-zinc-400 line-clamp-2 mb-3">{article.excerpt}</p>
+            <p className="text-xs text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
+              {article.excerpt}
+            </p>
           </div>
-          <div className="flex items-center justify-between text-xs text-zinc-500 pt-2 border-t border-zinc-800">
-            <span>{article.author}</span>
+
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border mt-auto">
+            <span
+              onClick={handleAuthorClick}
+              className="hover:text-foreground font-medium truncate max-w-[120px] cursor-pointer"
+            >
+              {article.author}
+            </span>
+
             <div className="flex items-center gap-2">
-              <Bookmark className="w-3.5 h-3.5 hover:text-white transition-colors" />
-              <Share2 className="w-3.5 h-3.5 hover:text-white transition-colors" />
+              <span className="text-[11px]">{article.publishedAt}</span>
+              <button
+                type="button"
+                onClick={handleBookmark}
+                title={isSaved ? "Bỏ lưu bài" : "Lưu bài viết"}
+                className="p-1 hover:text-foreground transition-colors cursor-pointer"
+              >
+                <Bookmark className={`w-3.5 h-3.5 ${isSaved ? "fill-primary text-primary" : ""}`} />
+              </button>
+              <button
+                type="button"
+                onClick={handleShare}
+                title={copied ? "Đã sao chép liên kết" : "Chia sẻ bài viết"}
+                className="p-1 hover:text-foreground transition-colors cursor-pointer"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Share2 className="w-3.5 h-3.5" />}
+              </button>
             </div>
           </div>
         </CardContent>

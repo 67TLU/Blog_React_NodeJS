@@ -51,7 +51,7 @@ export default function AboutPage() {
             {team.map((member, idx) => (
               <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-3">
                 <Avatar className="w-20 h-20 mx-auto border-2 border-blue-500/30">
-                  <AvatarImage src="{member.avatar}"/>
+                  <AvatarImage src={member.avatar}/>
                   <AvatarFallback>{member.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>

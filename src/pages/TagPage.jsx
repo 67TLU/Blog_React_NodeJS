@@ -1,67 +1,98 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import PublicLayout from "@/layouts/PublicLayout";
-import { Tag as TagIcon, Calendar, ArrowRight } from "lucide-react";
+import ArticleCard from "@/components/cards/ArticleCard";
+import { Tag as TagIcon, Calendar, Home, ChevronRight, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { mockArticles } from "@/data/mockArticles";
 
 export default function TagPage() {
   const { slug } = useParams();
-  
+  const [visibleCount, setVisibleCount] = useState(9);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   // Tên tag hiển thị từ Slug
   const tagName = slug ? slug.replace(/-/g, " ").toUpperCase() : "TAG";
+  const tagDisplay = slug ? slug.replace(/-/g, " ") : "tag";
 
   // Giả lập danh sách bài có thẻ tag này
   const filteredArticles = mockArticles;
 
+  const handleLoadMore = () => {
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount((prev) => prev + 6);
+      setLoadingMore(false);
+    }, 600);
+  };
+
   return (
     <PublicLayout>
       <div className="space-y-6">
-        {/* Banner Tag Header */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 md:p-8 flex items-center justify-between">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium flex-wrap">
+          <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="w-3.5 h-3.5" />
+            <span>Trang chủ</span>
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="hover:text-foreground">Thẻ chủ đề</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-foreground font-semibold">#{tagDisplay}</span>
+        </nav>
+
+        {/* Banner Tag Header — semantic tokens */}
+        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-xs">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-wider">
-              <TagIcon className="w-4 h-4"/> Thẻ chủ đề
+            <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+              <TagIcon className="w-4 h-4" /> Thẻ chủ đề
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white">#{tagName}</h1>
-            <p className="text-xs text-zinc-400">
-              Tổng hợp <strong className="text-white">{filteredArticles.length}</strong> bài viết liên quan đến chủ đề này
+            <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">
+              #{tagName}
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Tổng hợp{" "}
+              <strong className="text-foreground">{filteredArticles.length}</strong>{" "}
+              bài viết liên quan đến chủ đề này
             </p>
           </div>
+          <Badge className="hidden sm:flex items-center gap-1.5 bg-primary/10 text-primary border-primary/20 text-sm px-3 py-1.5">
+            <TagIcon className="w-3.5 h-3.5" />
+            {filteredArticles.length} bài
+          </Badge>
         </div>
 
-        {/* Danh sách bài viết */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredArticles.map((article) => (
-            <Link className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all flex flex-col group" key="{article.id}" to="{`/article/${article.id}`}">
-              <div className="h-48 overflow-hidden relative">
-                <img
-                  src={article.image}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <span className="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase">
-                  {article.category}
-                </span>
-              </div>
-
-              <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <h2 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-2">
-                    {article.title}
-                  </h2>
-                  <p className="text-xs text-zinc-400 line-clamp-2">{article.excerpt}</p>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-800/80">
-                  <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5"/> {article.publishedAt}</span>
-                  <span className="flex items-center gap-1 font-semibold text-blue-400 group-hover:translate-x-1 transition-transform">
-                    Đọc tiếp <ArrowRight className="w-3 h-3"/>
-                  </span>
-                </div>
-              </div>
-            </Link>
+        {/* Danh sách bài viết — dùng ArticleCard chuẩn */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredArticles.slice(0, visibleCount).map((article) => (
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
+
+        {/* Nút Load More */}
+        {visibleCount < filteredArticles.length && (
+          <div className="flex justify-center pt-4">
+            <Button
+              variant="outline"
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="gap-2 px-8 py-2 font-medium cursor-pointer border-border hover:bg-muted"
+            >
+              {loadingMore ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  Đang tải thêm...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  Xem thêm bài viết
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </PublicLayout>
   );

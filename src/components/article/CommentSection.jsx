@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { MessageSquare, Heart, Reply, Flag, Send, ThumbsUp, AlertCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -147,7 +147,9 @@ export default function CommentSection({ articleId }) {
 
       {/* Form viết bình luận gốc */}
       <form onSubmit={handleAddComment} className="space-y-3">
-        <Textarea onChange="{(e)" value="{newComment}"> setNewComment(e.target.value)}
+        <Textarea
+          onChange={(e) => setNewComment(e.target.value)}
+          value={newComment}
           placeholder="Chia sẻ ý kiến của bạn về bài viết này..."
           className="bg-zinc-900 border-zinc-800 text-white min-h-[90px] focus:border-blue-500"
         />
@@ -166,7 +168,7 @@ export default function CommentSection({ articleId }) {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="w-9 h-9">
-                  <AvatarImage src="{comment.avatar}"/>
+                  <AvatarImage src={comment.avatar}/>
                   <AvatarFallback>{comment.author[0]}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -215,17 +217,17 @@ export default function CommentSection({ articleId }) {
             {/* Form Trả lời Nested */}
             {replyingTo === comment.id && (
               <div className="ml-12 pt-3 space-y-2">
-                <Textarea onChange="{(e)" value="{replyContent}"> setReplyContent(e.target.value)}
+                <Textarea onChange={(e) => setReplyContent(e.target.value)} value={replyContent}
                   placeholder={`Trả lời ${comment.author}...`}
                   className="bg-zinc-800 border-zinc-700 text-white min-h-[70px] text-xs"
                 />
                 <div className="flex justify-end gap-2">
-                  <Button onClick="{()" size="sm" variant="ghost"> setReplyingTo(null)}
+                  <Button onClick={() => setReplyingTo(null)} size="sm" variant="ghost"
                     className="text-zinc-400 hover:bg-zinc-800 text-xs"
                   >
                     Hủy
                   </Button>
-                  <Button onClick="{()" size="sm"> handleAddReply(comment.id)}
+                  <Button onClick={() => handleAddReply(comment.id)} size="sm"
                     className="bg-blue-600 hover:bg-blue-700 text-xs font-semibold"
                   >
                     Trả lời
@@ -242,7 +244,7 @@ export default function CommentSection({ articleId }) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Avatar className="w-7 h-7">
-                          <AvatarImage src="{reply.avatar}"/>
+                          <AvatarImage src={reply.avatar}/>
                           <AvatarFallback>{reply.author[0]}</AvatarFallback>
                         </Avatar>
                         <span className="text-xs font-bold text-white">{reply.author}</span>
@@ -320,7 +322,7 @@ export default function CommentSection({ articleId }) {
                   </select>
                 </div>
 
-                <Button onClick="{()"> setReportSuccess(true)}
+                <Button onClick={() => setReportSuccess(true)}
                   disabled={!reportReason}
                   className="w-full bg-red-600 hover:bg-red-700 font-semibold"
                 >

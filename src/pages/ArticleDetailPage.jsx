@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import PublicLayout from "@/layouts/PublicLayout";
 import ArticleCard from "@/components/cards/ArticleCard";
 import { mockArticles } from "@/data/mockArticles";
+import { useAuth } from "@/context/AuthContext";
 
 // Icons
 import {
@@ -11,21 +12,23 @@ import {
   Share2,
   Clock,
   Eye,
-  MessageSquare,
-  ThumbsUp,
   AArrowUp,
   AArrowDown,
-  Send,
+  ChevronRight,
+  Home,
+  Edit,
+  Check,
 } from "lucide-react";
 
 // Shadcn UI
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
+import CommentSection from "@/components/article/CommentSection";
 
 export default function ArticleDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   
   // Lấy bài viết theo ID hoặc slug
   const article = mockArticles.find((item) => item.id === id || item.slug === id) || mockArticles[0];
@@ -35,240 +38,285 @@ export default function ArticleDetailPage() {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [fontSize, setFontSize] = useState("text-base"); // text-sm, text-base, text-lg
+  const [copied, setCopied] = useState(false);
 
-  // Trạng thái bình luận
-  const [commentList, setCommentList] = useState(article.comments || []);
-  const [newComment, setNewComment] = useState("");
+  // Thanh tiến độ đọc bài (Reading Progress Bar)
+  const [readingProgress, setReadingProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const currentProgress = (window.scrollY / totalHeight) * 100;
+        setReadingProgress(Math.min(100, Math.max(0, currentProgress)));
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 
-  const handleAddComment = (e) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-
-    const commentObj = {
-      id: Date.now().toString(),
-      user: "Bạn (Độc giả)",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
-      time: "Vừa xong",
-      content: newComment,
-      likes: 0,
-    };
-
-    setCommentList([commentObj, ...commentList]);
-    setNewComment("");
+  const handleShare = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const relatedArticles = mockArticles.filter((item) => item.id !== article.id).slice(0, 3);
   const popularArticles = [...mockArticles].sort((a, b) => parseFloat(b.views) - parseFloat(a.views)).slice(0, 4);
 
+  const canEdit = user && (user.role === "admin" || user.role === "author");
+
   return (
     <PublicLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* CỘT TRÁI & GIỮA: Nội dung chính bài viết (2 Cols) */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          {/* Header Bài viết */}
-          <div className="space-y-4">
-            <Link to={`/category/${article.categorySlug}`}>
-              <Badge className="bg-red-600 hover:bg-red-700 cursor-pointer">{article.category}</Badge>
-            </Link>
-            
-            <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              {article.title}
-            </h1>
+      {/* Reading Progress Bar ghim trên mép trên */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-50">
+        <div
+          className="h-full bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 transition-all duration-150"
+          style={{ width: `${readingProgress}%` }}
+        />
+      </div>
 
-            <p className="text-lg text-zinc-300 font-medium italic border-l-4 border-blue-500 pl-4 py-1">
-              {article.excerpt}
-            </p>
+      <div className="space-y-6">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium flex-wrap">
+          <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors">
+            <Home className="w-3.5 h-3.5" />
+            <span>Trang chủ</span>
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link
+            to={`/category/${article.categorySlug || "tin-tuc"}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {article.category}
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-foreground truncate max-w-[280px] md:max-w-md font-semibold">
+            {article.title}
+          </span>
+        </nav>
 
-            {/* Author Meta */}
-            <div className="flex flex-wrap items-center justify-between border-y border-zinc-800 py-3 gap-4 text-sm text-zinc-400">
-              <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10 border border-zinc-700">
-                  <AvatarImage src={article.authorAvatar || "https://github.com/shadcn.png"} />
-                  <AvatarFallback>{article.author[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold text-white">{article.author}</p>
-                  <p className="text-xs text-zinc-500">{article.publishedAt}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 text-xs">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" /> {article.readingTime || "3 phút đọc"}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5" /> {article.views || "1k"} lượt xem
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Thanh tương tác (Action Bar) */}
-          <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 p-3 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Button
-                variant={isLiked ? "default" : "outline"}
-                size="sm"
-                onClick={handleLike}
-                className={`gap-2 ${isLiked ? "bg-red-600 hover:bg-red-700 text-white" : "border-zinc-700"}`}
-              >
-                <Heart className={`w-4 h-4 ${isLiked ? "fill-white" : ""}`} />
-                <span>{likes}</span>
-              </Button>
-
-              <Button
-                variant={isSaved ? "default" : "outline"}
-                size="sm"
-                onClick={() => setIsSaved(!isSaved)}
-                className="gap-2 border-zinc-700"
-              >
-                <Bookmark className={`w-4 h-4 ${isSaved ? "fill-white" : ""}`} />
-                <span>{isSaved ? "Đã lưu" : "Lưu"}</span>
-              </Button>
-
-              <Button variant="outline" size="sm" className="gap-2 border-zinc-700">
-                <Share2 className="w-4 h-4" /> Chia sẻ
-              </Button>
-            </div>
-
-            {/* Điều chỉnh cỡ chữ */}
-            <div className="flex items-center gap-1 bg-zinc-800 p-1 rounded-md">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setFontSize("text-sm")}
-                title="Thu nhỏ chữ"
-              >
-                <AArrowDown className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setFontSize("text-base")}
-                title="Cỡ chữ mặc định"
-              >
-                A
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setFontSize("text-lg")}
-                title="Phóng to chữ"
-              >
-                <AArrowUp className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Ảnh bìa bài viết */}
-          <div className="rounded-xl overflow-hidden border border-zinc-800">
-            <img src={article.image} alt={article.title} className="w-full max-h-[450px] object-cover" />
-          </div>
-
-          {/* Nội dung bài viết */}
-          <div
-            className={`prose prose-invert max-w-none space-y-4 text-zinc-200 leading-relaxed ${fontSize}`}
-            dangerouslySetInnerHTML={{ __html: article.content || `<p>Nội dung đang được cập nhật...</p>` }}
-          />
-
-          {/* Khu vực Bình luận (Comments Section) */}
-          <div className="pt-8 border-t border-zinc-800 space-y-6">
-            <h3 className="text-xl font-bold flex items-center gap-2 text-white">
-              <MessageSquare className="w-5 h-5 text-blue-500" />
-              Bình luận ({commentList.length})
-            </h3>
-
-            {/* Form nhập comment */}
-            <form onSubmit={handleAddComment} className="space-y-3">
-              <Textarea
-                placeholder="Chia sẻ ý kiến của bạn về bài viết này..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-500 focus-visible:ring-1"
-                rows={3}
-              />
-              <div className="flex justify-end">
-                <Button type="submit" size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700">
-                  <Send className="w-4 h-4" /> Gửi bình luận
-                </Button>
-              </div>
-            </form>
-
-            {/* Danh sách comment */}
-            <div className="space-y-4 pt-4">
-              {commentList.map((comment) => (
-                <div key={comment.id} className="flex gap-3 bg-zinc-900/60 p-4 rounded-lg border border-zinc-800/80">
-                  <Avatar className="w-9 h-9 border border-zinc-700">
-                    <AvatarImage src={comment.avatar} />
-                    <AvatarFallback>{comment.user[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm text-white">{comment.user}</span>
-                      <span className="text-xs text-zinc-500">{comment.time}</span>
-                    </div>
-                    <p className="text-sm text-zinc-300">{comment.content}</p>
-                    <div className="pt-1">
-                      <button className="text-xs text-zinc-500 hover:text-white flex items-center gap-1 transition-colors">
-                        <ThumbsUp className="w-3 h-3" /> {comment.likes} Thích
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* CỘT PHẢI: Sidebar (Related & Popular Articles) */}
-        <div className="space-y-6">
-          {/* Bài viết xem nhiều nhất */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-4">
-            <h3 className="font-bold text-lg text-white border-b border-zinc-800 pb-2 flex items-center gap-2">
-              <span className="w-2 h-4 bg-red-500 rounded-full"></span>
-              Đọc nhiều nhất
-            </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* CỘT TRÁI & GIỮA: Nội dung chính bài viết (2 Cols) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Header Bài viết */}
             <div className="space-y-4">
-              {popularArticles.map((item, index) => (
-                <Link key={item.id} to={`/article/${item.slug}`} className="flex gap-3 group cursor-pointer">
-                  <span className="text-2xl font-black text-zinc-600 group-hover:text-blue-500 transition-colors">
-                    0{index + 1}
-                  </span>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold text-zinc-200 line-clamp-2 group-hover:text-blue-400 transition-colors">
-                      {item.title}
-                    </h4>
-                    <span className="text-xs text-zinc-500">{item.views} lượt xem</span>
+              <div className="flex items-center justify-between gap-3">
+                <Link to={`/category/${article.categorySlug || "tin-tuc"}`}>
+                  <Badge className="bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-xs">
+                    {article.category}
+                  </Badge>
+                </Link>
+
+                {/* Phím tắt chỉnh sửa bài cho Tác giả / Admin */}
+                {canEdit && (
+                  <Link to={`/author/edit/${article.id}`}>
+                    <Button variant="outline" size="xs" className="gap-1.5 text-xs text-primary border-primary/30 hover:bg-primary/10">
+                      <Edit className="w-3 h-3" /> Chỉnh sửa bài
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
+                {article.title}
+              </h1>
+
+              <p className="text-base md:text-lg text-muted-foreground font-medium italic border-l-4 border-primary pl-4 py-1 leading-relaxed">
+                {article.excerpt}
+              </p>
+
+              {/* Author Meta */}
+              <div className="flex flex-wrap items-center justify-between border-y border-border py-3.5 gap-4 text-sm text-muted-foreground">
+                <Link
+                  to={`/author-profile/${article.authorId || 101}`}
+                  className="flex items-center gap-3 group cursor-pointer"
+                >
+                  <Avatar className="w-10 h-10 border border-border group-hover:border-primary transition-colors">
+                    <AvatarImage src={article.authorAvatar || "https://github.com/shadcn.png"} />
+                    <AvatarFallback>{article.author?.[0] || "A"}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {article.author}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{article.publishedAt}</p>
                   </div>
                 </Link>
-              ))}
+
+                <div className="flex items-center gap-4 text-xs">
+                  <span className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-full">
+                    <Clock className="w-3.5 h-3.5 text-primary" /> {article.readingTime || "3 phút đọc"}
+                  </span>
+                  <span className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-full">
+                    <Eye className="w-3.5 h-3.5 text-primary" /> {article.views || "1.2k"} lượt xem
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Thanh tương tác (Action Bar) */}
+            <div className="flex items-center justify-between bg-card border border-border p-3 rounded-xl shadow-2xs">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={isLiked ? "default" : "outline"}
+                  size="sm"
+                  onClick={handleLike}
+                  className={`gap-1.5 cursor-pointer ${
+                    isLiked
+                      ? "bg-red-600 hover:bg-red-700 text-white"
+                      : "border-border text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Heart className={`w-4 h-4 ${isLiked ? "fill-white text-white" : ""}`} />
+                  <span>{likes}</span>
+                </Button>
+
+                <Button
+                  variant={isSaved ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setIsSaved(!isSaved)}
+                  className={`gap-1.5 cursor-pointer ${
+                    isSaved
+                      ? "bg-primary text-primary-foreground"
+                      : "border-border text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Bookmark className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
+                  <span>{isSaved ? "Đã lưu" : "Lưu bài"}</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShare}
+                  className="gap-1.5 border-border text-foreground hover:bg-muted cursor-pointer"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
+                  <span>{copied ? "Đã copy" : "Chia sẻ"}</span>
+                </Button>
+              </div>
+
+              {/* Điều chỉnh cỡ chữ */}
+              <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-7 w-7 cursor-pointer ${fontSize === "text-sm" ? "bg-background text-foreground shadow-2xs font-bold" : "text-muted-foreground"}`}
+                  onClick={() => setFontSize("text-sm")}
+                  title="Thu nhỏ chữ"
+                >
+                  <AArrowDown className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-7 w-7 text-xs font-bold cursor-pointer ${fontSize === "text-base" ? "bg-background text-foreground shadow-2xs" : "text-muted-foreground"}`}
+                  onClick={() => setFontSize("text-base")}
+                  title="Cỡ chữ mặc định"
+                >
+                  A
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-7 w-7 cursor-pointer ${fontSize === "text-lg" ? "bg-background text-foreground shadow-2xs font-bold" : "text-muted-foreground"}`}
+                  onClick={() => setFontSize("text-lg")}
+                  title="Phóng to chữ"
+                >
+                  <AArrowUp className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Ảnh bìa bài viết */}
+            <div className="rounded-xl overflow-hidden border border-border shadow-xs bg-muted">
+              <img
+                src={article.image}
+                alt={article.title}
+                className="w-full max-h-[460px] object-cover"
+              />
+            </div>
+
+            {/* Nội dung bài viết */}
+            <div
+              className={`prose dark:prose-invert max-w-none space-y-4 text-foreground leading-relaxed ${fontSize}`}
+              dangerouslySetInnerHTML={{
+                __html: article.content || `<p>Nội dung bài viết đang được cập nhật...</p>`,
+              }}
+            />
+
+            {/* Tags của bài viết */}
+            {article.tags && article.tags.length > 0 && (
+              <div className="flex items-center gap-2 pt-4 border-t border-border flex-wrap">
+                <span className="text-xs text-muted-foreground font-semibold">Từ khóa:</span>
+                {article.tags.map((tag) => (
+                  <Link key={tag} to={`/tag/${tag.toLowerCase()}`}>
+                    <Badge variant="secondary" className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer text-xs">
+                      #{tag}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Khu vực Bình luận */}
+            <div className="pt-8 border-t border-border">
+              <CommentSection articleId={article.id} />
             </div>
           </div>
 
-          {/* Bài viết liên quan */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-lg text-white flex items-center gap-2">
-              <span className="w-2 h-4 bg-blue-500 rounded-full"></span>
-              Bài viết liên quan
-            </h3>
+          {/* CỘT PHẢI: Sidebar (Related & Popular Articles) */}
+          <div className="space-y-6">
+            {/* Bài viết xem nhiều nhất */}
+            <div className="bg-card border border-border rounded-xl p-5 space-y-4 shadow-2xs">
+              <h3 className="font-bold text-base text-foreground border-b border-border pb-3 flex items-center gap-2">
+                <span className="w-2 h-4 bg-red-500 rounded-full" />
+                Đọc nhiều nhất
+              </h3>
+              <div className="space-y-4">
+                {popularArticles.map((item, index) => (
+                  <Link
+                    key={item.id}
+                    to={`/article/${item.slug || item.id}`}
+                    className="flex gap-3 group cursor-pointer"
+                  >
+                    <span className="text-2xl font-black text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0">
+                      0{index + 1}
+                    </span>
+                    <div className="space-y-1">
+                      <h4 className="text-xs font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                        {item.title}
+                      </h4>
+                      <span className="text-[11px] text-muted-foreground">{item.views} lượt xem</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Bài viết liên quan */}
             <div className="space-y-4">
-              {relatedArticles.map((item) => (
-                <ArticleCard key={item.id} article={item} />
-              ))}
+              <h3 className="font-bold text-base text-foreground flex items-center gap-2">
+                <span className="w-2 h-4 bg-primary rounded-full" />
+                Bài viết liên quan
+              </h3>
+              <div className="space-y-4">
+                {relatedArticles.map((item) => (
+                  <ArticleCard key={item.id} article={item} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </PublicLayout>
   );

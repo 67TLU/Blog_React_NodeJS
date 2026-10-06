@@ -1,108 +1,335 @@
-import React from "react";
-import { Search, User, Bell, Menu, Bookmark, LogOut } from "lucide-react";
+﻿import React, { useState, useEffect } from "react";
+import { Search, Bell, Menu, Bookmark, LogOut, Sun, Moon, X, Newspaper, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import {Link} from "react-router-dom";
-import {UserIcon} from 'lucide-react'
+import { useTheme } from "@/context/ThemeContext";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { User as UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuGroup // <-- Thêm cái này
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 
+// Danh sách chuyên mục dùng chung
+export const CATEGORIES = [
+  { label: "Khám phá", slug: "all" },
+  { label: "Tin tức", slug: "tin-tuc" },
+  { label: "Thể thao", slug: "the-thao" },
+  { label: "Tài chính", slug: "tai-chinh" },
+  { label: "Công nghệ", slug: "cong-nghe" },
+  { label: "Thời tiết", slug: "thoi-tiet" },
+];
+
 export default function PublicLayout({ children }) {
-    const { user, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [keyword, setKeyword] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Khắc phục triệt để lỗi web bị đơ/cứng sau khi click menu hoặc chuyển trang
+  useEffect(() => {
+    document.body.style.pointerEvents = "";
+    document.body.style.overflow = "";
+    setMobileMenuOpen(false);
+    setDropdownOpen(false);
+  }, [location.pathname]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!keyword.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(keyword.trim())}`);
+  };
+
+  const handleNavigate = (path) => {
+    setDropdownOpen(false);
+    document.body.style.pointerEvents = "";
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    document.body.style.pointerEvents = "";
+    logout();
+    navigate("/");
+  };
+
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-200">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur border-b border-zinc-800 px-4 py-3">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-border px-4 py-3 shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Logo & Mobile menu */}
+          {/* Logo & Mobile menu toggle */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="w-5 h-5" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              aria-label="Menu"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
-            <span className="text-2xl font-black bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent cursor-pointer">
-              MSN NEWS
-            </span>
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-2xl font-black bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 bg-clip-text text-transparent cursor-pointer"
+            >
+              <Newspaper className="w-7 h-7 text-red-500 shrink-0" />
+              <span>MSN NEWS</span>
+            </Link>
           </div>
 
           {/* Search Bar */}
-          <div className="relative flex-1 max-w-md hidden sm:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          <form onSubmit={handleSearch} className="relative flex-1 max-w-md hidden sm:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
               type="text"
-              placeholder="Tìm kiếm trên web..."
-              className="pl-9 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-400 focus-visible:ring-1"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="Tìm kiếm tin tức, bài viết, tác giả..."
+              className="pl-9 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-1"
             />
-          </div>
+          </form>
 
           {/* User actions */}
-<div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            {/* Nút đổi giao diện Sáng / Tối */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label="Đổi giao diện"
+              title={theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
+              className="text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-blue-500" />}
+            </Button>
+
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="w-9 h-9 border border-zinc-700 cursor-pointer">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>{user.name[0]}</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-<DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800 text-white w-48">
-  {/* Bọc toàn bộ phần thông tin và menu chính vào DropdownMenuGroup */}
-  <DropdownMenuGroup>
-    <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-    <DropdownMenuSeparator className="bg-zinc-800" />
-    <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
-      <UserIcon className="w-4 h-4 mr-2" /> Hồ sơ cá nhân
+              <>
+                {/* Chuông thông báo */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Thông báo"
+                  onClick={() => handleNavigate("/user/notifications")}
+                  className="relative text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  <Bell className="w-5 h-5" />
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                </Button>
+
+                {/* Dropdown Profile */}
+<DropdownMenu
+  open={dropdownOpen}
+  onOpenChange={(open) => {
+    setDropdownOpen(open);
+    if (!open) {
+      document.body.style.pointerEvents = "";
+    }
+  }}
+>
+  <DropdownMenuTrigger
+    className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+    aria-label="Tài khoản"
+  >
+    <Avatar className="w-9 h-9 border border-border">
+      <AvatarImage src={user.avatar} alt={user.name} />
+      <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
+    </Avatar>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground border-border shadow-lg">
+    {/*  ĐÃ SỬA: Bọc DropdownMenuLabel bên trong một DropdownMenuGroup */}
+    <DropdownMenuGroup>
+      <DropdownMenuLabel className="font-semibold text-foreground">
+        <div className="truncate">{user.name}</div>
+        <div className="text-xs font-normal text-muted-foreground capitalize">{user.role || "Thành viên"}</div>
+      </DropdownMenuLabel>
+    </DropdownMenuGroup>
+
+    <DropdownMenuSeparator />
+    
+    <DropdownMenuGroup>
+      <DropdownMenuItem
+        onClick={() => handleNavigate("/user/profile")}
+        className="cursor-pointer hover:bg-muted"
+      >
+        <UserIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Hồ sơ cá nhân
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => handleNavigate("/user/bookmarks")}
+        className="cursor-pointer hover:bg-muted"
+      >
+        <Bookmark className="w-4 h-4 mr-2 text-muted-foreground" /> Bài viết đã lưu
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+    
+    <DropdownMenuSeparator />
+    
+    <DropdownMenuItem
+      onClick={() => handleNavigate("/author")}
+      className="cursor-pointer hover:bg-muted"
+    >
+      Khu vực tác giả
     </DropdownMenuItem>
-    <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
-      <Bookmark className="w-4 h-4 mr-2" /> Bài viết đã lưu
+    <DropdownMenuItem
+      onClick={() => handleNavigate("/admin")}
+      className="cursor-pointer hover:bg-muted"
+    >
+      Khu vực quản trị
     </DropdownMenuItem>
-  </DropdownMenuGroup>
-  
-  <DropdownMenuSeparator className="bg-zinc-800" />
-  <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-400 hover:bg-zinc-800">
-    <LogOut className="w-4 h-4 mr-2" /> Đăng xuất
-  </DropdownMenuItem>
-</DropdownMenuContent>
-              </DropdownMenu>
+    
+    <DropdownMenuSeparator />
+    
+    <DropdownMenuItem
+      onClick={handleLogout}
+      className="cursor-pointer text-destructive focus:text-destructive hover:bg-destructive/10"
+    >
+      <LogOut className="w-4 h-4 mr-2" /> Đăng xuất
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
+              </>
             ) : (
-              <Link to="/login">
-                <Button variant="outline" className="gap-2 border-zinc-700 hover:bg-zinc-800">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleNavigate("/login")}
+                  className="gap-2 cursor-pointer border-border"
+                >
                   <UserIcon className="w-4 h-4" /> Đăng nhập
                 </Button>
-                
-                <Button variant="outline" className="gap-2 border-zinc-700 hover:bg-zinc-800">
-                  <UserIcon className="w-4 h-4" />Đăng ký
+                <Button
+                  size="sm"
+                  onClick={() => handleNavigate("/register")}
+                  className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  Đăng ký
                 </Button>
-              </Link>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Navigation Categories */}
-        <nav className="max-w-7xl mx-auto flex items-center gap-6 pt-3 text-sm font-medium overflow-x-auto text-zinc-400 border-t border-zinc-800/50 mt-3">
-          <span className="text-white font-semibold cursor-pointer border-b-2 border-blue-500 pb-1">Khám phá</span>
-          <span className="hover:text-white cursor-pointer transition-colors pb-1">Tin tức</span>
-          <span className="hover:text-white cursor-pointer transition-colors pb-1">Thể thao</span>
-          <span className="hover:text-white cursor-pointer transition-colors pb-1">Tài chính</span>
-          <span className="hover:text-white cursor-pointer transition-colors pb-1">Thời tiết</span>
-          <span className="hover:text-white cursor-pointer transition-colors pb-1">Công nghệ</span>
+        {/* Navigation Categories Desktop */}
+        <nav className="max-w-7xl mx-auto hidden md:flex items-center gap-6 pt-3 text-sm font-medium overflow-x-auto text-muted-foreground border-t border-border/50 mt-3">
+          {CATEGORIES.map((cat) => {
+            const to = `/category/${cat.slug}`;
+            const isActive = location.pathname === to;
+            return (
+              <Link
+                key={cat.slug}
+                to={to}
+                className={`whitespace-nowrap pb-1.5 border-b-2 transition-colors ${
+                  isActive
+                    ? "text-primary font-bold border-primary"
+                    : "border-transparent hover:text-foreground hover:border-border"
+                }`}
+              >
+                {cat.label}
+              </Link>
+            );
+          })}
         </nav>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border mt-3 pt-3 pb-2 space-y-2 animate-in fade-in slide-in-from-top-2">
+            <form onSubmit={handleSearch} className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm kiếm..."
+                className="pl-9 bg-muted/50 border-border text-foreground"
+              />
+            </form>
+            <div className="grid grid-cols-2 gap-1 text-sm font-medium">
+              {CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  to={`/category/${cat.slug}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2 rounded-md hover:bg-muted text-foreground transition-colors"
+                >
+                  <span>{cat.label}</span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 bg-zinc-900 text-zinc-400 py-6 text-center text-sm">
-        <p>© 2026 MSN News Clone - Dự án học React JS</p>
+      <footer className="border-t border-border bg-card text-card-foreground mt-auto transition-colors">
+        <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 font-black text-lg bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent">
+              <Newspaper className="w-5 h-5 text-red-500" />
+              <span>MSN NEWS</span>
+            </div>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              Trang tin tức & blog công nghệ hàng đầu, mang đến những cập nhật sắc bén và kiến thức chuyên sâu.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Chuyên mục</h4>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              {CATEGORIES.slice(1).map((c) => (
+                <li key={c.slug}>
+                  <Link to={`/category/${c.slug}`} className="hover:text-foreground transition-colors">
+                    {c.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Thông tin</h4>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              <li><Link to="/about" className="hover:text-foreground transition-colors">Giới thiệu</Link></li>
+              <li><Link to="/contact" className="hover:text-foreground transition-colors">Liên hệ</Link></li>
+              <li><Link to="/search" className="hover:text-foreground transition-colors">Tìm kiếm</Link></li>
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <h4 className="font-bold text-foreground">Tài khoản & Tiện ích</h4>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              {user ? (
+                <>
+                  <li><Link to="/user/profile" className="hover:text-foreground transition-colors">Hồ sơ cá nhân</Link></li>
+                  <li><Link to="/user/bookmarks" className="hover:text-foreground transition-colors">Bài viết đã lưu</Link></li>
+                  <li><Link to="/author" className="hover:text-foreground transition-colors">Khu vực tác giả</Link></li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/login" className="hover:text-foreground transition-colors">Đăng nhập</Link></li>
+                  <li><Link to="/register" className="hover:text-foreground transition-colors">Đăng ký tài khoản</Link></li>
+                </>
+              )}
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-border/50 py-4 text-center text-xs text-muted-foreground">
+          © 2026 MSN News Platform - Bản quyền thuộc về Tòa soạn
+        </div>
       </footer>
     </div>
   );
