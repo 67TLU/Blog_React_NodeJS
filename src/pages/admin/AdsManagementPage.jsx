@@ -20,10 +20,10 @@ export default function AdsManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Megaphone className="w-6 h-6 text-amber-500" /> Quản lý Quảng cáo & Banner
           </h1>
-          <p className="text-xs text-zinc-400">Theo dõi hiệu suất vị trí đặt banner quảng cáo</p>
+          <p className="text-xs text-muted-foreground">Theo dõi hiệu suất vị trí đặt banner quảng cáo</p>
         </div>
         <Button className="bg-red-600 hover:bg-red-700 font-semibold gap-2">
           <Plus className="w-4 h-4" /> Thêm vị trí QC mới
@@ -31,29 +31,29 @@ export default function AdsManagementPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-zinc-900 border-zinc-800 text-white">
+        <Card className="bg-card border-border text-foreground">
           <CardContent className="p-4">
-            <p className="text-xs text-zinc-400">Tổng doanh thu dự kiến (Tháng)</p>
-            <p className="text-2xl font-black text-green-400 mt-1">$4,850.00</p>
+            <p className="text-xs text-muted-foreground">Tổng doanh thu dự kiến (Tháng)</p>
+            <p className="text-2xl font-black text-green-600 dark:text-green-400 mt-1">$4,850.00</p>
           </CardContent>
         </Card>
-        <Card className="bg-zinc-900 border-zinc-800 text-white">
+        <Card className="bg-card border-border text-foreground">
           <CardContent className="p-4">
-            <p className="text-xs text-zinc-400">Tổng Lượt Click (CTR)</p>
-            <p className="text-2xl font-black text-blue-400 mt-1">6,020 (3.1%)</p>
+            <p className="text-xs text-muted-foreground">Tổng Lượt Click (CTR)</p>
+            <p className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">6,020 (3.1%)</p>
           </CardContent>
         </Card>
-        <Card className="bg-zinc-900 border-zinc-800 text-white">
+        <Card className="bg-card border-border text-foreground">
           <CardContent className="p-4">
-            <p className="text-xs text-zinc-400">Vị trí đang hoạt động</p>
-            <p className="text-2xl font-black text-amber-400 mt-1">2 / 3</p>
+            <p className="text-xs text-muted-foreground">Vị trí đang hoạt động</p>
+            <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">2 / 3</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm text-zinc-300">
-          <thead className="bg-zinc-800/50 text-xs uppercase text-zinc-400 border-b border-zinc-800">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <table className="w-full text-left text-sm text-foreground">
+          <thead className="bg-muted/50 text-xs uppercase text-muted-foreground border-b border-border">
             <tr>
               <th className="p-4">Tên Chiến dịch / Banner</th>
               <th className="p-4">Vị trí hiển thị</th>
@@ -63,18 +63,18 @@ export default function AdsManagementPage() {
               <th className="p-4 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800">
+          <tbody className="divide-y divide-border">
             {ads.map((ad) => (
-              <tr key={ad.id} className="hover:bg-zinc-800/40">
-                <td className="p-4 font-semibold text-white">{ad.title}</td>
-                <td className="p-4 text-zinc-400">{ad.position}</td>
+              <tr key={ad.id} className="hover:bg-muted/40">
+                <td className="p-4 font-semibold text-foreground">{ad.title}</td>
+                <td className="p-4 text-muted-foreground">{ad.position}</td>
                 <td className="p-4 text-xs font-mono">{ad.views.toLocaleString()}</td>
                 <td className="p-4 text-xs font-mono">{ad.clicks.toLocaleString()}</td>
                 <td className="p-4">
                   {ad.active ? (
-                    <span className="text-xs text-green-400 font-semibold">Đang bật</span>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-semibold">Đang bật</span>
                   ) : (
-                    <span className="text-xs text-zinc-500 font-semibold">Tắt</span>
+                    <span className="text-xs text-muted-foreground font-semibold">Tắt</span>
                   )}
                 </td>
                 <td className="p-4 text-right">
@@ -82,9 +82,9 @@ export default function AdsManagementPage() {
                     size="sm"
                     variant="ghost"
                     onClick={() => toggleAdStatus(ad.id)}
-                    className="text-zinc-300 hover:bg-zinc-800"
+                    className="text-foreground hover:bg-muted"
                   >
-                    {ad.active ? <ToggleRight className="w-6 h-6 text-green-400" /> : <ToggleLeft className="w-6 h-6 text-zinc-500" />}
+                    {ad.active ? <ToggleRight className="w-6 h-6 text-green-600 dark:text-green-400" /> : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
                   </Button>
                 </td>
               </tr>

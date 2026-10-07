@@ -31,14 +31,14 @@ export default function CreateArticlePage() {
   return (
     <div className="space-y-6">
       {/* Header Form */}
-      <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+      <div className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-zinc-400 hover:text-white">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold text-white">Tạo bài viết mới</h1>
-            <p className="text-xs text-zinc-400">Soạn thảo nội dung và gửi duyệt</p>
+            <h1 className="text-xl font-bold text-foreground">Tạo bài viết mới</h1>
+            <p className="text-xs text-muted-foreground">Soạn thảo nội dung và gửi duyệt</p>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ export default function CreateArticlePage() {
             type="button"
             variant="outline"
             onClick={(e) => handleSubmit(e, "DRAFT")}
-            className="border-zinc-700 hover:bg-zinc-800 gap-2 text-zinc-300"
+            className="border-border hover:bg-muted gap-2 text-foreground"
           >
             <Save className="w-4 h-4" /> Lưu bản nháp
           </Button>
@@ -67,33 +67,33 @@ export default function CreateArticlePage() {
         {/* Cột trái: Nội dung chính (2 cols) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Tiêu đề bài viết *</label>
+            <label className="text-sm font-medium text-foreground">Tiêu đề bài viết *</label>
             <Input
               placeholder="Nhập tiêu đề hấp dẫn cho bài viết..."
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="bg-zinc-900 border-zinc-800 text-white text-lg font-semibold h-12 focus-visible:ring-1"
+              className="bg-card border-border text-foreground text-lg font-semibold h-12 focus-visible:ring-1"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Tóm tắt ngắn (Excerpt)</label>
+            <label className="text-sm font-medium text-foreground">Tóm tắt ngắn (Excerpt)</label>
             <Textarea
               placeholder="Mô tả ngắn gọn nội dung bài viết (1-2 câu)..."
               value={formData.excerpt}
               onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-              className="bg-zinc-900 border-zinc-800 text-white"
+              className="bg-card border-border text-foreground"
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Nội dung chi tiết *</label>
+            <label className="text-sm font-medium text-foreground">Nội dung chi tiết *</label>
             <Textarea
               placeholder="Nhập nội dung bài viết ở đây..."
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="bg-zinc-900 border-zinc-800 text-white font-mono text-sm leading-relaxed"
+              className="bg-card border-border text-foreground font-mono text-sm leading-relaxed"
               rows={14}
             />
           </div>
@@ -101,17 +101,17 @@ export default function CreateArticlePage() {
 
         {/* Cột phải: Thiết lập bài viết (Sidebar) */}
         <div className="space-y-4">
-          <Card className="bg-zinc-900 border-zinc-800 text-white">
+          <Card className="bg-card border-border text-foreground">
             <CardContent className="p-4 space-y-4">
-              <h3 className="font-bold text-sm border-b border-zinc-800 pb-2">Cấu hình bài viết</h3>
+              <h3 className="font-bold text-sm border-b border-border pb-2">Cấu hình bài viết</h3>
 
               {/* Chọn chuyên mục */}
               <div className="space-y-2">
-                <label className="text-xs text-zinc-400">Chuyên mục</label>
+                <label className="text-xs text-muted-foreground">Chuyên mục</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-md p-2 text-sm text-white focus:outline-none"
+                  className="w-full bg-muted border border-border rounded-md p-2 text-sm text-foreground focus:outline-none"
                 >
                   <option value="the-thao">Thể thao</option>
                   <option value="cong-nghe">Công nghệ</option>
@@ -123,24 +123,24 @@ export default function CreateArticlePage() {
 
               {/* Link ảnh bìa */}
               <div className="space-y-2">
-                <label className="text-xs text-zinc-400">URL Ảnh bìa (Featured Image)</label>
+                <label className="text-xs text-muted-foreground">URL Ảnh bìa (Featured Image)</label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="https://images.unsplash.com/..."
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white text-xs"
+                    className="bg-muted border-border text-foreground text-xs"
                   />
                 </div>
               </div>
 
               {/* Preview ảnh bìa */}
               {formData.imageUrl ? (
-                <div className="rounded-lg overflow-hidden border border-zinc-800 h-32">
+                <div className="rounded-lg overflow-hidden border border-border h-32">
                   <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                 </div>
               ) : (
-                <div className="border border-dashed border-zinc-800 rounded-lg p-6 text-center text-zinc-500 flex flex-col items-center gap-2">
+                <div className="border border-dashed border-border rounded-lg p-6 text-center text-muted-foreground flex flex-col items-center gap-2">
                   <ImageIcon className="w-8 h-8 opacity-50" />
                   <span className="text-xs">Dán URL ảnh để xem trước</span>
                 </div>

@@ -11,14 +11,14 @@ export default function ForbiddenPage() {
       </div>
       <div className="space-y-2 max-w-md">
         <h1 className="text-4xl font-black text-red-500 font-mono">403</h1>
-        <h2 className="text-lg font-bold text-zinc-200">Truy cập bị từ chối</h2>
-        <p className="text-xs text-zinc-400 leading-relaxed">
+        <h2 className="text-lg font-bold text-foreground">Truy cập bị từ chối</h2>
+        <p className="text-xs text-muted-foreground leading-relaxed">
           Tài khoản của bạn không có đủ quyền hạn để truy cập vào khu vực này. Vui lòng liên hệ Quản trị viên.
         </p>
       </div>
       <div className="flex items-center gap-3 pt-2">
         <Link to="/">
-          <Button className="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs gap-1.5">
+          <Button className="bg-muted hover:bg-accent text-foreground font-semibold text-xs gap-1.5">
             <Home className="w-3.5 h-3.5" /> Về Trang chủ
           </Button>
         </Link>

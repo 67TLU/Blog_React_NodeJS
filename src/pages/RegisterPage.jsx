@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import PublicLayout from "@/layouts/PublicLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -24,9 +23,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <PublicLayout>
-      <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md border-zinc-800 bg-zinc-950 text-white shadow-2xl shadow-black/40">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
+        {/* Nền trang trí — gradient xanh nhạt + blob mờ, tự đổi theo theme */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 via-background to-blue-100/60 dark:from-blue-950/60 dark:via-background dark:to-slate-900/70" />
+        <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-blue-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-sky-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute top-1/2 left-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-3xl" />
+        <Card className="relative w-full max-w-md border-zinc-800 shadow-2xl shadow-black/40 dynamic-fade-in">
           <CardHeader className="space-y-2 text-center">
             <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-500">
               <User className="h-5 w-5" />
@@ -40,7 +43,7 @@ export default function RegisterPage() {
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Họ và tên</label>
+                <label className="text-xs font-semibold uppercase tracking-wider">Họ và tên</label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                     <User className="h-4 w-4" />
@@ -50,14 +53,14 @@ export default function RegisterPage() {
                     placeholder="Nguyễn Văn A"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="h-11 bg-zinc-900 border-zinc-800 pl-10 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500"
+                    className="h-11 border-zinc-800 pl-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Địa chỉ Email</label>
+                <label className="text-xs font-semibold uppercase tracking-wider">Địa chỉ Email</label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                     <Mail className="h-4 w-4" />
@@ -67,14 +70,14 @@ export default function RegisterPage() {
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-11 bg-zinc-900 border-zinc-800 pl-10 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500"
+                    className="h-11 border-zinc-800 pl-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Mật khẩu</label>
+                <label className="text-xs font-semibold uppercase tracking-wider">Mật khẩu</label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                     <Lock className="h-4 w-4" />
@@ -84,7 +87,7 @@ export default function RegisterPage() {
                     placeholder="Tối thiểu 6 ký tự"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-11 bg-zinc-900 border-zinc-800 pl-10 pr-10 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500"
+                    className="h-11 border-zinc-800 pl-10 pr-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                     required
                   />
                   <button
@@ -111,6 +114,5 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
       </div>
-    </PublicLayout>
   );
 }

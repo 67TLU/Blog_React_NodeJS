@@ -32,10 +32,10 @@ export default function MenuManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Navigation className="w-6 h-6 text-blue-500" /> Quản lý Menu Điều hướng
           </h1>
-          <p className="text-xs text-zinc-400">Tùy chỉnh các liên kết thanh Header và Footer trên giao diện portal</p>
+          <p className="text-xs text-muted-foreground">Tùy chỉnh các liên kết thanh Header và Footer trên giao diện portal</p>
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-1.5 text-xs">
           <Save className="w-4 h-4" /> Lưu cấu hình Menu
@@ -44,25 +44,25 @@ export default function MenuManagementPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form thêm item */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 h-fit">
-          <h3 className="text-sm font-bold text-white">Thêm liên kết mới</h3>
+        <div className="bg-card border border-border rounded-xl p-5 space-y-4 h-fit">
+          <h3 className="text-sm font-bold text-foreground">Thêm liên kết mới</h3>
           <form onSubmit={handleAddMenuItem} className="space-y-4 text-xs">
             <div className="space-y-1">
-              <label className="text-zinc-400 font-semibold">Tên hiển thị</label>
+              <label className="text-muted-foreground font-semibold">Tên hiển thị</label>
               <Input
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 placeholder="Ví dụ: Tin Nóng"
-                className="bg-zinc-950 border-zinc-800 text-white"
+                className="bg-muted border-border text-foreground"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-zinc-400 font-semibold">Đường dẫn URL / Route</label>
+              <label className="text-muted-foreground font-semibold">Đường dẫn URL / Route</label>
               <Input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="/category/tin-nong"
-                className="bg-zinc-950 border-zinc-800 text-white font-mono"
+                className="bg-muted border-border text-foreground font-mono"
               />
             </div>
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2">
@@ -72,33 +72,33 @@ export default function MenuManagementPage() {
         </div>
 
         {/* Danh sách sắp xếp Menu */}
-        <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-3">
-          <h3 className="text-sm font-bold text-white mb-2">Thứ tự các liên kết (Header Main Menu)</h3>
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5 space-y-3">
+          <h3 className="text-sm font-bold text-foreground mb-2">Thứ tự các liên kết (Header Main Menu)</h3>
 
           <div className="space-y-2">
             {menuItems.map((item, index) => (
               <div
                 key={item.id}
-                className="bg-zinc-950 border border-zinc-800 rounded-lg p-3.5 flex items-center justify-between hover:border-zinc-700 transition-colors"
+                className="bg-muted border border-border rounded-lg p-3.5 flex items-center justify-between hover:border-foreground/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <MoveVertical className="w-4 h-4 text-zinc-600 cursor-grab" />
+                  <MoveVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
                   <div>
-                    <p className="text-xs font-bold text-white flex items-center gap-2">
+                    <p className="text-xs font-bold text-foreground flex items-center gap-2">
                       {item.label}
-                      {item.target === "_blank" && <ExternalLink className="w-3 h-3 text-zinc-500" />}
+                      {item.target === "_blank" && <ExternalLink className="w-3 h-3 text-muted-foreground" />}
                     </p>
-                    <p className="text-[10px] font-mono text-zinc-400">{item.url}</p>
+                    <p className="text-[10px] font-mono text-muted-foreground">{item.url}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-zinc-500 font-mono">Vị trí #{index + 1}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">Vị trí #{index + 1}</span>
                   <Button
                     size="icon"
                     variant="ghost"
                     onClick={() => removeItem(item.id)}
-                    className="h-8 w-8 text-red-400 hover:bg-zinc-800"
+                    className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-muted"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

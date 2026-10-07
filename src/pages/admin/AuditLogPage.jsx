@@ -11,29 +11,29 @@ export default function AuditLogPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <History className="w-6 h-6 text-purple-500" /> Audit Logs & Nhật ký hệ thống
         </h1>
-        <p className="text-xs text-zinc-400">Ghi lại toàn bộ hành động bảo mật và quản trị của các tài khoản</p>
+        <p className="text-xs text-muted-foreground">Ghi lại toàn bộ hành động bảo mật và quản trị của các tài khoản</p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden divide-y divide-zinc-800">
+      <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
         {mockLogs.map((log) => (
           <div key={log.id} className="p-4 flex items-center justify-between text-sm">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${log.status === "WARNING" ? "bg-red-500/10 text-red-400" : "bg-blue-500/10 text-blue-400"}`}>
+              <div className={`p-2 rounded-lg ${log.status === "WARNING" ? "bg-red-500/10 text-red-600 dark:text-red-400" : "bg-blue-500/10 text-blue-600 dark:text-blue-400"}`}>
                 {log.status === "WARNING" ? <AlertCircle className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
               </div>
               <div>
-                <p className="font-semibold text-white">{log.action}</p>
-                <div className="flex items-center gap-3 text-xs text-zinc-500 mt-0.5">
+                <p className="font-semibold text-foreground">{log.action}</p>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                   <span className="flex items-center gap-1"><User className="w-3 h-3" /> {log.user}</span>
                   <span>•</span>
                   <span>IP: {log.ip}</span>
                 </div>
               </div>
             </div>
-            <span className="text-xs text-zinc-500">{log.time}</span>
+            <span className="text-xs text-muted-foreground">{log.time}</span>
           </div>
         ))}
       </div>

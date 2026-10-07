@@ -36,19 +36,19 @@ export default function EditArticlePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header điều hướng */}
-      <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+      <div className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-3">
           <Button
             size="icon"
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold text-white">Chỉnh sửa bài viết #{id}</h1>
-            <p className="text-xs text-zinc-400 flex items-center gap-1">
+            <h1 className="text-xl font-bold text-foreground">Chỉnh sửa bài viết #{id}</h1>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="w-3 h-3 text-amber-500" /> Lưu gần nhất: {lastSaved}
             </p>
           </div>
@@ -59,9 +59,9 @@ export default function EditArticlePage() {
             type="button"
             variant="outline"
             onClick={handleSaveDraft}
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 gap-1.5 text-xs"
+            className="border-border text-foreground hover:bg-muted gap-1.5 text-xs"
           >
-            <Save className="w-4 h-4 text-amber-400" /> Lưu bản nháp
+            <Save className="w-4 h-4 text-amber-600 dark:text-amber-400" /> Lưu bản nháp
           </Button>
           <Button
             onClick={handleSubmitForApproval}
@@ -75,22 +75,22 @@ export default function EditArticlePage() {
       {/* Form soạn thảo */}
       <form className="space-y-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-300 uppercase">Tiêu đề bài viết</label>
+          <label className="text-xs font-bold text-foreground uppercase">Tiêu đề bài viết</label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Nhập tiêu đề hấp dẫn..."
-            className="bg-zinc-900 border-zinc-800 text-white font-bold text-lg h-12 focus:border-blue-500"
+            className="bg-card border-border text-foreground font-bold text-lg h-12 focus:border-blue-500"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-300 uppercase">Chuyên mục</label>
+            <label className="text-xs font-bold text-foreground uppercase">Chuyên mục</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 text-white rounded-lg p-3 text-sm focus:border-blue-500"
+              className="w-full bg-card border border-border text-foreground rounded-lg p-3 text-sm focus:border-blue-500"
             >
               <option value="Công nghệ">Công nghệ</option>
               <option value="Thể thao">Thể thao</option>
@@ -100,30 +100,30 @@ export default function EditArticlePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-300 uppercase">Thẻ Tags (cách nhau bởi dấu phẩy)</label>
+            <label className="text-xs font-bold text-foreground uppercase">Thẻ Tags (cách nhau bởi dấu phẩy)</label>
             <Input
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="bg-zinc-900 border-zinc-800 text-white text-sm h-11"
+              className="bg-card border-border text-foreground text-sm h-11"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-300 uppercase">Mô tả ngắn (Excerpt)</label>
+          <label className="text-xs font-bold text-foreground uppercase">Mô tả ngắn (Excerpt)</label>
           <Textarea
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
-            className="bg-zinc-900 border-zinc-800 text-white text-sm min-h-[70px]"
+            className="bg-card border-border text-foreground text-sm min-h-[70px]"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-300 uppercase">Nội dung bài viết</label>
+          <label className="text-xs font-bold text-foreground uppercase">Nội dung bài viết</label>
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="bg-zinc-900 border-zinc-800 text-white text-sm min-h-[300px] leading-relaxed"
+            className="bg-card border-border text-foreground text-sm min-h-[300px] leading-relaxed"
           />
         </div>
       </form>

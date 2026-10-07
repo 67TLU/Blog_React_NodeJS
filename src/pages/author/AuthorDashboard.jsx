@@ -18,8 +18,8 @@ export default function AuthorDashboard() {
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Author Dashboard</h1>
-          <p className="text-sm text-zinc-400">Quản lý bài viết và theo dõi hiệu suất nội dung của bạn.</p>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">Author Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Quản lý bài viết và theo dõi hiệu suất nội dung của bạn.</p>
         </div>
         <Link to="/author/create">
           <Button className="bg-blue-600 hover:bg-blue-700 gap-2 font-semibold">
@@ -33,13 +33,13 @@ export default function AuthorDashboard() {
         {stats.map((item, index) => {
           const Icon = item.icon;
           return (
-            <Card key={index} className="bg-zinc-900 border-zinc-800 text-white">
+            <Card key={index} className="bg-card border-border text-foreground">
               <CardContent className="p-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-zinc-400 font-medium mb-1">{item.title}</p>
+                  <p className="text-xs text-muted-foreground font-medium mb-1">{item.title}</p>
                   <p className="text-2xl font-black">{item.value}</p>
                 </div>
-                <div className={`p-3 bg-zinc-800 rounded-xl ${item.color}`}>
+                <div className={`p-3 bg-muted rounded-xl ${item.color}`}>
                   <Icon className="w-6 h-6" />
                 </div>
               </CardContent>
@@ -51,27 +51,27 @@ export default function AuthorDashboard() {
       {/* Danh sách bài viết gần đây */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">Bài viết gần đây</h2>
-          <Link to="/author/articles" className="text-xs text-blue-400 hover:underline">
+          <h2 className="text-lg font-bold text-foreground">Bài viết gần đây</h2>
+          <Link to="/author/articles" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
             Xem tất cả
           </Link>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden divide-y divide-zinc-800">
+        <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
           {mockArticles.slice(0, 4).map((article) => (
             <div key={article.id} className="p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 <img src={article.image} alt={article.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-white truncate">{article.title}</h3>
-                  <div className="flex items-center gap-3 text-xs text-zinc-400 mt-1">
+                  <h3 className="text-sm font-semibold text-foreground truncate">{article.title}</h3>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                     <span>{article.category}</span>
                     <span>•</span>
                     <span>{article.publishedAt}</span>
                   </div>
                 </div>
               </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20 flex-shrink-0">
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 flex-shrink-0">
                 Đã xuất bản
               </span>
             </div>

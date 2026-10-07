@@ -28,10 +28,10 @@ export default function MyArticlesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <FileText className="w-6 h-6 text-blue-500" /> Bài viết của tôi
           </h1>
-          <p className="text-xs text-zinc-400">Quản lý toàn bộ danh sách bài đã đăng, bài chờ duyệt và bản nháp</p>
+          <p className="text-xs text-muted-foreground">Quản lý toàn bộ danh sách bài đã đăng, bài chờ duyệt và bản nháp</p>
         </div>
         <Link to="/author/create">
           <Button className="bg-blue-600 hover:bg-blue-700 font-semibold gap-2 text-xs">
@@ -41,7 +41,7 @@ export default function MyArticlesPage() {
       </div>
 
       {/* Tabs lọc trạng thái */}
-      <div className="flex items-center gap-2 border-b border-zinc-800 pb-3 text-xs overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-border pb-3 text-xs overflow-x-auto">
         {[
           { key: "ALL", label: "Tất cả bài viết" },
           { key: "PUBLISHED", label: "Đã xuất bản" },
@@ -53,8 +53,8 @@ export default function MyArticlesPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap ${
               activeTab === tab.key
-                ? "bg-zinc-800 text-white border border-zinc-700"
-                : "text-zinc-400 hover:text-white"
+                ? "bg-muted text-foreground border border-border"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.label}
@@ -63,9 +63,9 @@ export default function MyArticlesPage() {
       </div>
 
       {/* Bảng bài viết */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm text-zinc-300">
-          <thead className="bg-zinc-800/50 text-xs uppercase text-zinc-400 border-b border-zinc-800">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <table className="w-full text-left text-sm text-foreground">
+          <thead className="bg-muted/50 text-xs uppercase text-muted-foreground border-b border-border">
             <tr>
               <th className="p-4">Bài viết</th>
               <th className="p-4">Chuyên mục</th>
@@ -75,33 +75,33 @@ export default function MyArticlesPage() {
               <th className="p-4 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800">
+          <tbody className="divide-y divide-border">
             {filtered.map((item) => (
-              <tr key={item.id} className="hover:bg-zinc-800/40">
-                <td className="p-4 font-semibold text-white max-w-xs truncate">{item.title}</td>
-                <td className="p-4 text-xs text-blue-400">{item.category}</td>
+              <tr key={item.id} className="hover:bg-muted/40">
+                <td className="p-4 font-semibold text-foreground max-w-xs truncate">{item.title}</td>
+                <td className="p-4 text-xs text-blue-600 dark:text-blue-400">{item.category}</td>
                 <td className="p-4">
                   {item.status === "PUBLISHED" && (
-                    <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
+                    <span className="text-xs bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
                       <CheckCircle className="w-3 h-3" /> Đã xuất bản
                     </span>
                   )}
                   {item.status === "PENDING" && (
-                    <span className="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
+                    <span className="text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
                       <Clock className="w-3 h-3" /> Chờ duyệt
                     </span>
                   )}
                   {item.status === "DRAFT" && (
-                    <span className="text-xs bg-zinc-800 text-zinc-400 border border-zinc-700 px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
+                    <span className="text-xs bg-muted text-muted-foreground border border-border px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-fit">
                       <FileEdit className="w-3 h-3" /> Bản nháp
                     </span>
                   )}
                 </td>
                 <td className="p-4 text-xs font-mono">{item.views.toLocaleString()}</td>
-                <td className="p-4 text-xs text-zinc-500">{item.createdAt}</td>
+                <td className="p-4 text-xs text-muted-foreground">{item.createdAt}</td>
                 <td className="p-4 text-right space-x-1">
                   <Link to={`/author/edit/${item.id}`}>
-                    <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-300 hover:bg-zinc-800">
+                    <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground hover:bg-muted">
                       <Edit className="w-4 h-4" />
                     </Button>
                   </Link>
@@ -109,7 +109,7 @@ export default function MyArticlesPage() {
                     size="icon"
                     variant="ghost"
                     onClick={() => handleDelete(item.id)}
-                    className="h-8 w-8 text-red-400 hover:bg-zinc-800"
+                    className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-muted"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

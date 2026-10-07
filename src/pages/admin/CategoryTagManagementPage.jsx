@@ -45,20 +45,20 @@ export default function CategoryTagManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <FolderTree className="w-6 h-6 text-emerald-500" /> Quản lý Chuyên mục & Tags
         </h1>
-        <p className="text-xs text-zinc-400">Cấu hình hệ thống phân loại bài viết và các thẻ tìm kiếm SEO</p>
+        <p className="text-xs text-muted-foreground">Cấu hình hệ thống phân loại bài viết và các thẻ tìm kiếm SEO</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-800 pb-3 text-xs">
+      <div className="flex items-center gap-2 border-b border-border pb-3 text-xs">
         <button
           onClick={() => setActiveTab("CATEGORIES")}
           className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
             activeTab === "CATEGORIES"
-              ? "bg-zinc-800 text-white border border-zinc-700"
-              : "text-zinc-400 hover:text-white"
+              ? "bg-muted text-foreground border border-border"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <FolderTree className="w-4 h-4" /> Chuyên mục
@@ -67,8 +67,8 @@ export default function CategoryTagManagementPage() {
           onClick={() => setActiveTab("TAGS")}
           className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
             activeTab === "TAGS"
-              ? "bg-zinc-800 text-white border border-zinc-700"
-              : "text-zinc-400 hover:text-white"
+              ? "bg-muted text-foreground border border-border"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <Tag className="w-4 h-4" /> Thẻ Tags
@@ -78,33 +78,33 @@ export default function CategoryTagManagementPage() {
       {activeTab === "CATEGORIES" ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Form thêm chuyên mục */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 h-fit">
-            <h3 className="text-sm font-bold text-white">Thêm Chuyên mục mới</h3>
+          <div className="bg-card border border-border rounded-xl p-5 space-y-4 h-fit">
+            <h3 className="text-sm font-bold text-foreground">Thêm Chuyên mục mới</h3>
             <form onSubmit={handleAddCategory} className="space-y-4 text-xs">
               <div className="space-y-1">
-                <label className="text-zinc-400 font-semibold">Tên chuyên mục</label>
+                <label className="text-muted-foreground font-semibold">Tên chuyên mục</label>
                 <Input
                   value={catName}
                   onChange={(e) => setCatName(e.target.value)}
                   placeholder="Ví dụ: Xe điện"
-                  className="bg-zinc-950 border-zinc-800 text-white"
+                  className="bg-muted border-border text-foreground"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-zinc-400 font-semibold">Đường dẫn tĩnh (Slug)</label>
+                <label className="text-muted-foreground font-semibold">Đường dẫn tĩnh (Slug)</label>
                 <Input
                   value={catSlug}
                   onChange={(e) => setCatSlug(e.target.value)}
                   placeholder="xe-dien"
-                  className="bg-zinc-950 border-zinc-800 text-white font-mono"
+                  className="bg-muted border-border text-foreground font-mono"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-zinc-400 font-semibold">Chuyên mục cha (Nếu có)</label>
+                <label className="text-muted-foreground font-semibold">Chuyên mục cha (Nếu có)</label>
                 <select
                   value={catParent}
                   onChange={(e) => setCatParent(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md p-2 text-xs"
+                  className="w-full bg-muted border border-border text-foreground rounded-md p-2 text-xs"
                 >
                   <option value="">-- Không chọn (Gốc) --</option>
                   {categories.map((c) => (
@@ -121,9 +121,9 @@ export default function CategoryTagManagementPage() {
           </div>
 
           {/* Bảng danh sách chuyên mục */}
-          <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-800/50 text-xs uppercase text-zinc-400 border-b border-zinc-800">
+          <div className="lg:col-span-2 bg-card border border-border rounded-xl overflow-hidden">
+            <table className="w-full text-left text-sm text-foreground">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground border-b border-border">
                 <tr>
                   <th className="p-4">Tên chuyên mục</th>
                   <th className="p-4">Slug</th>
@@ -131,20 +131,20 @@ export default function CategoryTagManagementPage() {
                   <th className="p-4 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {categories.map((cat) => (
-                  <tr key={cat.id} className="hover:bg-zinc-800/40">
-                    <td className="p-4 font-semibold text-white">
-                      {cat.parent && <span className="text-zinc-500 mr-2">└──</span>}
+                  <tr key={cat.id} className="hover:bg-muted/40">
+                    <td className="p-4 font-semibold text-foreground">
+                      {cat.parent && <span className="text-muted-foreground mr-2">└──</span>}
                       {cat.name}
                     </td>
-                    <td className="p-4 text-xs font-mono text-zinc-400">{cat.slug}</td>
+                    <td className="p-4 text-xs font-mono text-muted-foreground">{cat.slug}</td>
                     <td className="p-4 text-xs font-mono">{cat.count}</td>
                     <td className="p-4 text-right space-x-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-zinc-300 hover:bg-zinc-800">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground hover:bg-muted">
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-red-400 hover:bg-zinc-800">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-muted">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </td>
@@ -156,9 +156,9 @@ export default function CategoryTagManagementPage() {
         </div>
       ) : (
         /* Danh sách Tags */
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold text-white">Danh sách Thẻ Tags đang sử dụng</h3>
+            <h3 className="text-sm font-bold text-foreground">Danh sách Thẻ Tags đang sử dụng</h3>
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs gap-1.5">
               <Plus className="w-3.5 h-3.5" /> Tạo Tag mới
             </Button>
@@ -167,14 +167,14 @@ export default function CategoryTagManagementPage() {
             {tags.map((t) => (
               <div
                 key={t.id}
-                className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-zinc-200 flex items-center gap-2"
+                className="bg-muted border border-border rounded-lg px-3 py-1.5 text-xs text-foreground flex items-center gap-2"
               >
-                <Tag className="w-3 h-3 text-emerald-400" />
+                <Tag className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 <span className="font-semibold">{t.name}</span>
-                <span className="text-[10px] bg-zinc-900 text-zinc-400 px-1.5 py-0.5 rounded font-mono">
+                <span className="text-[10px] bg-card text-muted-foreground px-1.5 py-0.5 rounded font-mono">
                   {t.count}
                 </span>
-                <button className="text-zinc-500 hover:text-red-400 ml-1">×</button>
+                <button className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 ml-1">×</button>
               </div>
             ))}
           </div>

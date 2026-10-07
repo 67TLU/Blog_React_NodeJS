@@ -23,8 +23,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md border-zinc-800  shadow-2xl shadow-black/40 dynamic-fade-in">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
+      {/* Nền trang trí — gradient xanh nhạt + blob mờ, tự đổi theo theme */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 via-background to-blue-100/60 dark:from-blue-950/60 dark:via-background dark:to-slate-900/70" />
+      <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-blue-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-sky-400/15 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-3xl" />
+      <Card className="relative w-full max-w-md border-zinc-800  shadow-2xl shadow-black/40 dynamic-fade-in">
         <CardHeader className="space-y-2 text-center">
           {/* Logo giả định hoặc Icon thương hiệu phía trên */}
           <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-500">

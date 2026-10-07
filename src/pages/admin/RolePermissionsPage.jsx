@@ -42,10 +42,10 @@ export default function RolePermissionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <ShieldCheck className="w-6 h-6 text-indigo-500" /> Ma trận Phân quyền & Vai trò (RBAC)
           </h1>
-          <p className="text-xs text-zinc-400">Thiết lập chi tiết quyền hạn tác vụ tương ứng với từng nhóm người dùng</p>
+          <p className="text-xs text-muted-foreground">Thiết lập chi tiết quyền hạn tác vụ tương ứng với từng nhóm người dùng</p>
         </div>
         <Button onClick={handleSave} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-1.5 text-xs">
           <Save className="w-4 h-4" /> Cập nhật phân quyền
@@ -53,9 +53,9 @@ export default function RolePermissionsPage() {
       </div>
 
       {/* Bảng Ma trận */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm text-zinc-300 border-collapse">
-          <thead className="bg-zinc-800/60 text-xs uppercase text-zinc-400 border-b border-zinc-800">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <table className="w-full text-left text-sm text-foreground border-collapse">
+          <thead className="bg-muted/60 text-xs uppercase text-muted-foreground border-b border-border">
             <tr>
               <th className="p-4 w-1/3">Tên quyền hạn (Permission)</th>
               <th className="p-4 text-center">Quản trị viên (Admin)</th>
@@ -64,12 +64,12 @@ export default function RolePermissionsPage() {
               <th className="p-4 text-center">Độc giả (Subscriber)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800 text-xs">
+          <tbody className="divide-y divide-border text-xs">
             {mockPermissions.map((perm) => (
-              <tr key={perm.key} className="hover:bg-zinc-800/40">
-                <td className="p-4 font-semibold text-white">
+              <tr key={perm.key} className="hover:bg-muted/40">
+                <td className="p-4 font-semibold text-foreground">
                   {perm.label}
-                  <span className="block text-[10px] font-mono text-zinc-500 font-normal">{perm.key}</span>
+                  <span className="block text-[10px] font-mono text-muted-foreground font-normal">{perm.key}</span>
                 </td>
 
                 {["ADMIN", "EDITOR", "AUTHOR", "SUBSCRIBER"].map((role) => {
@@ -84,7 +84,7 @@ export default function RolePermissionsPage() {
                         className={`w-6 h-6 rounded flex items-center justify-center mx-auto transition-all ${
                           isChecked
                             ? "bg-indigo-600 text-white"
-                            : "bg-zinc-800 border border-zinc-700 text-transparent"
+                            : "bg-muted border border-border text-transparent"
                         } ${isAdmin ? "opacity-60 cursor-not-allowed" : "hover:scale-110"}`}
                       >
                         <Check className="w-3.5 h-3.5 stroke-[3]" />

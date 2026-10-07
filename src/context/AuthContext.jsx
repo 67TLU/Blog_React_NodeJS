@@ -6,7 +6,7 @@ const mockUser = {
   id: "u-101",
   name: "Quản trị viên Hệ thống",
   email: "admin@portalnews.com",
-  role: "admin", // 'admin' | 'editor' | 'author' | 'subscriber'
+  role: "subscriber", // 'admin' | 'editor' | 'author' | 'subscriber'
   avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
 };
 
