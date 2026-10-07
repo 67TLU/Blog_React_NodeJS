@@ -46,6 +46,8 @@ import SystemSettingsPage from "@/pages/admin/SystemSettingsPage";
 // System Pages
 import ForbiddenPage from "@/pages/system/ForbiddenPage";
 import NotFoundPage from "@/pages/system/NotFoundPage";
+import CommentSection from "./components/article/CommentSection";
+import { ArticleCardSkeleton } from "./components/cards/Skeletons";
 
 export default function App() {
   return (

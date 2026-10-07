@@ -18,7 +18,6 @@ export default function ArticleCard({ article, variant = "default" }) {
     e.stopPropagation();
     setIsSaved(!isSaved);
   };
-
   const handleShare = (e) => {
     e.preventDefault();
     e.stopPropagation();

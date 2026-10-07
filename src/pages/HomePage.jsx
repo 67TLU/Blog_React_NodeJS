@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PublicLayout from "@/layouts/PublicLayout";
 import ArticleCard from "@/components/cards/ArticleCard";
+import { ArticleCardSkeleton } from "@/components/cards/Skeletons";
 import { mockArticles } from "@/data/mockArticles";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Flame, TrendingUp, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 
 export default function HomePage() {
-  const [visibleCount, setVisibleCount] = useState(8);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(8);//Khoi tao so bai viet mac dinh hien thi la 8
+  const [loadingMore, setLoadingMore] = useState(false);//khoi tao trang thai loading khi load them bai viet
+
+  // loading được derive ngay trong render — không cần setState đồng bộ trong effect
+  const loading = !loaded;
+
+  // Giả lập thời gian fetch dữ liệu để hiển thị Skeleton trước ArticleCard
+  useEffect(() => {
+    const timer = setTimeout(() => setLoaded(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const featuredArticle = mockArticles[0];
   const topStories = mockArticles.slice(1, 5);
@@ -18,9 +29,9 @@ export default function HomePage() {
   const handleLoadMore = () => {
     setLoadingMore(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 4);
+      setVisibleCount((prev) => prev + 4);//tai them 4 trang bai viet moi khi bam xem them 
       setLoadingMore(false);
-    }, 600);
+    }, 1000);
   };
 
   return (
@@ -51,7 +62,11 @@ export default function HomePage() {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cột trái: Bài Featured lớn */}
           <div className="lg:col-span-2 min-h-[380px]">
-            <ArticleCard article={featuredArticle} variant="featured" />
+            {loading ? (
+              <ArticleCardSkeleton variant="featured" />
+            ) : (
+              <ArticleCard article={featuredArticle} variant="featured" />
+            )}
           </div>
 
           {/* Cột phải: Câu chuyện hàng đầu (Top Stories) */}
@@ -126,9 +141,22 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {latestArticles.slice(0, visibleCount).map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
+            {loading ? (
+              Array.from({ length: 8 }).map((_, idx) => (
+                <ArticleCardSkeleton key={`skeleton-${idx}`} />
+              ))
+            ) : (
+              <>
+                {latestArticles.slice(0, visibleCount).map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+                {/* Skeleton cho các bài sẽ được tải thêm */}
+                {loadingMore &&
+                  Array.from({ length: 4 }).map((_, idx) => (
+                    <ArticleCardSkeleton key={`skeleton-more-${idx}`} />
+                  ))}
+              </>
+            )}
           </div>
 
           {/* Nút Tải thêm bài viết */}

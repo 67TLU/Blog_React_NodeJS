@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import PublicLayout from "@/layouts/PublicLayout";
 import ArticleCard from "@/components/cards/ArticleCard";
+import { ArticleCardSkeleton } from "@/components/cards/Skeletons";
 import { Tag as TagIcon, Calendar, Home, ChevronRight, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,17 @@ import { mockArticles } from "@/data/mockArticles";
 export default function TagPage() {
   const { slug } = useParams();
   const [visibleCount, setVisibleCount] = useState(9);
+  const [loadedSlug, setLoadedSlug] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  // loading được derive ngay trong render — không cần setState đồng bộ trong effect
+  const loading = loadedSlug !== slug;
+
+  // Giả lập thời gian fetch dữ liệu — hiển thị Skeleton khi đang tải
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadedSlug(slug), 600);
+    return () => clearTimeout(timer);
+  }, [slug]);
 
   // Tên tag hiển thị từ Slug
   const tagName = slug ? slug.replace(/-/g, " ").toUpperCase() : "TAG";
@@ -63,11 +74,24 @@ export default function TagPage() {
           </Badge>
         </div>
 
-        {/* Danh sách bài viết — dùng ArticleCard chuẩn */}
+        {/* Danh sách bài viết — dùng ArticleCard chuẩn, Skeleton khi đang tải */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredArticles.slice(0, visibleCount).map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
+          {loading ? (
+            Array.from({ length: 9 }).map((_, idx) => (
+              <ArticleCardSkeleton key={`skeleton-${idx}`} />
+            ))
+          ) : (
+            <>
+              {filteredArticles.slice(0, visibleCount).map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+              {/* Skeleton cho các bài sẽ được tải thêm */}
+              {loadingMore &&
+                Array.from({ length: 6 }).map((_, idx) => (
+                  <ArticleCardSkeleton key={`skeleton-more-${idx}`} />
+                ))}
+            </>
+          )}
         </div>
 
         {/* Nút Load More */}

@@ -16,7 +16,7 @@ export default function AboutPage() {
         {/* Banner */}
         <div className="text-center space-y-4 border-b border-zinc-800 pb-8">
           <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Về chúng tôi</span>
-          <h1 className="text-3xl md:text-4xl font-black text-white">Nền tảng Tin tức & Tri thức Công nghệ Hàng đầu</h1>
+          <h1 className="text-3xl md:text-4xl font-black">Nền tảng Tin tức & Tri thức Công nghệ Hàng đầu</h1>
           <p className="text-sm text-zinc-400 max-w-2xl mx-auto">
             Cung cấp thông tin nhanh chóng, chính xác và phân tích chuyên sâu về Công nghệ, Khởi nghiệp, Kinh tế số toàn cầu.
           </p>
@@ -24,19 +24,19 @@ export default function AboutPage() {
 
         {/* Con số ấn tượng */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+          <div className=" border border-zinc-300 dark:border-zinc-600 p-6 rounded-2xl">
             <p className="text-3xl font-black text-blue-500">5M+</p>
             <p className="text-xs text-zinc-400 mt-1">Độc giả hàng tháng</p>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+          <div className=" border border-zinc-300 dark:border-zinc-600 p-6 rounded-2xl">
             <p className="text-3xl font-black text-green-500">200+</p>
             <p className="text-xs text-zinc-400 mt-1">Tác giả & Chuyên gia</p>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+          <div className="border border-zinc-300 dark:border-zinc-600 p-6 rounded-2xl">
             <p className="text-3xl font-black text-amber-500">10K+</p>
             <p className="text-xs text-zinc-400 mt-1">Bài viết xuất bản</p>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
+          <div className=" border border-zinc-300 dark:border-zinc-600 p-6 rounded-2xl">
             <p className="text-3xl font-black text-purple-500">24/7</p>
             <p className="text-xs text-zinc-400 mt-1">Cập nhật liên tục</p>
           </div>
@@ -44,18 +44,18 @@ export default function AboutPage() {
 
         {/* Đội ngũ tòa soạn */}
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-white text-center flex items-center justify-center gap-2">
+          <h2 className="text-xl font-bold  text-center flex items-center justify-center gap-2">
             <Users className="w-5 h-5 text-blue-500"/> Ban Biên Tập & Tòa Soạn
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {team.map((member, idx) => (
-              <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center space-y-3">
+              <div key={idx} className="border border-zinc-300 dark:border-zinc-600 rounded-xl p-6 text-center space-y-3">
                 <Avatar className="w-20 h-20 mx-auto border-2 border-blue-500/30">
                   <AvatarImage src={member.avatar}/>
                   <AvatarFallback>{member.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-base font-bold text-white">{member.name}</h3>
+                  <h3 className="text-base font-bold ">{member.name}</h3>
                   <p className="text-xs text-blue-400 font-semibold">{member.role}</p>
                 </div>
               </div>

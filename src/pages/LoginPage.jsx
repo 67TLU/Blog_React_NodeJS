@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md border-zinc-800 bg-zinc-950 text-white shadow-2xl shadow-black/40 dynamic-fade-in">
+      <Card className="w-full max-w-md border-zinc-800  shadow-2xl shadow-black/40 dynamic-fade-in">
         <CardHeader className="space-y-2 text-center">
           {/* Logo giả định hoặc Icon thương hiệu phía trên */}
           <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-500">
@@ -41,7 +41,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Trường Email */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              <label className="text-xs font-semibold uppercase tracking-wider ">
                 Địa chỉ Email
               </label>
               <div className="relative">
@@ -53,7 +53,7 @@ export default function LoginPage() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 bg-zinc-900 border-zinc-800 pl-10 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
+                  className="h-11  border-zinc-800 pl-10  placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                   required
                 />
               </div>
@@ -62,7 +62,7 @@ export default function LoginPage() {
             {/* Trường Mật khẩu */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                <label className="text-xs font-semibold uppercase tracking-wider ">
                   Mật khẩu
                 </label>
                 <Link to="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 hover:underline">
@@ -78,7 +78,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 bg-zinc-900 border-zinc-800 pl-10 pr-10 text-white placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
+                  className="h-11  border-zinc-800 pl-10 pr-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                   required
                 />
                 {/* Nút bấm ẩn hiện mật khẩu tích hợp icon Lucide */}
@@ -103,7 +103,7 @@ export default function LoginPage() {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-zinc-800" />
             </div>
-            <span className="relative bg-zinc-950 px-3 text-xs text-zinc-500 uppercase tracking-wider">
+            <span className="relative bg-white dark:bg-zinc-900 px-3 text-xs  uppercase tracking-wider">
               Hoặc tiếp tục với
             </span>
           </div>

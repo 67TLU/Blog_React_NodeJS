@@ -242,6 +242,28 @@ export default function PublicLayout({ children }) {
               </Link>
             );
           })}
+          <div className="flex items-center gap-6 ml-auto">
+                      <Link
+            to="/about"
+            className={`whitespace-nowrap pb-1.5 border-b-2 transition-colors`}
+          >
+            Giới thiệu 
+          </Link>
+                    <Link
+            to="/contact"
+            className={`whitespace-nowrap pb-1.5 border-b-2 transition-colors`}
+          >
+            Liên hệ
+          </Link>
+                    <Link
+            to="/search"
+            className={`whitespace-nowrap pb-1.5 border-b-2 transition-colors`}
+          >
+            Tìm kiếm
+          </Link>
+
+          </div>
+
         </nav>
 
         {/* Mobile Navigation Drawer */}
