@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import DOMPurify from "dompurify";
+import { formatViews } from "@/ulitis/formatTime";
 import PublicLayout from "@/layouts/PublicLayout";
 import ArticleCard from "@/components/cards/ArticleCard";
 import { mockArticles } from "@/data/mockArticles";
 import { useAuth } from "@/context/AuthContext";
-
+import { useAccessLogin } from "@/context/DialogProvider";
 // Icons
 import {
   Heart,
@@ -25,13 +27,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CommentSection from "@/components/article/CommentSection";
+import NotFoundPage from "@/pages/system/NotFoundPage";
 
 export default function ArticleDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
   
-  // Lấy bài viết theo ID hoặc slug
-  const article = mockArticles.find((item) => item.id === id || item.slug === id) || mockArticles[0];
+  // Lấy bài viết theo ID hoặc slug — không thấy thì render trang 404 (sau khi đủ hooks)
+  const article = mockArticles.find((item) => item.id === id || item.slug === id);
 
   // Trạng thái tương tác
   const [likes, setLikes] = useState(128);
@@ -39,29 +42,46 @@ export default function ArticleDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [fontSize, setFontSize] = useState("text-base"); // text-sm, text-base, text-lg
   const [copied, setCopied] = useState(false);
-
+  const showAccessLogin = useAccessLogin();
   // Thanh tiến độ đọc bài (Reading Progress Bar)
   const [readingProgress, setReadingProgress] = useState(0);
 
+  // rAF throttle: chỉ setState tối đa ~1 lần/trang frame, listener passive
   useEffect(() => {
+    let rafId = null;
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const currentProgress = (window.scrollY / totalHeight) * 100;
-        setReadingProgress(Math.min(100, Math.max(0, currentProgress)));
-      }
+      if (rafId !== null) return; // đã có frame chờ xử lý
+      rafId = requestAnimationFrame(() => {
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (totalHeight > 0) {
+          const currentProgress = (window.scrollY / totalHeight) * 100;
+          setReadingProgress(Math.min(100, Math.max(0, currentProgress)));
+        }
+        rafId = null;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
+  // Early return PHẢI đặt sau toàn bộ hooks (rules of hooks)
+  if (!article) {
+    return <NotFoundPage />;
+  }
+
   const handleLike = () => {
+    if(!user)
+      return showAccessLogin()
     setIsLiked(!isLiked);
     setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 
   const handleShare = () => {
+    
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
@@ -70,9 +90,11 @@ export default function ArticleDetailPage() {
   };
 
   const relatedArticles = mockArticles.filter((item) => item.id !== article.id).slice(0, 3);
-  const popularArticles = [...mockArticles].sort((a, b) => parseFloat(b.views) - parseFloat(a.views)).slice(0, 4);
+  const popularArticles = [...mockArticles]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 4);
 
-  const canEdit = user && (user.role === "admin" || user.role === "author");
+  const canEdit = user && (user.role === "admin" || user.id === article.authorId);
 
   return (
     <PublicLayout>
@@ -157,7 +179,7 @@ export default function ArticleDetailPage() {
                     <Clock className="w-3.5 h-3.5 text-primary" /> {article.readingTime || "3 phút đọc"}
                   </span>
                   <span className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-full">
-                    <Eye className="w-3.5 h-3.5 text-primary" /> {article.views || "1.2k"} lượt xem
+                    <Eye className="w-3.5 h-3.5 text-primary" /> {formatViews(article.views)} lượt xem
                   </span>
                 </div>
               </div>
@@ -183,7 +205,11 @@ export default function ArticleDetailPage() {
                 <Button
                   variant={isSaved ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setIsSaved(!isSaved)}
+                  onClick={() => {
+                    if(!user){
+                      return showAccessLogin()
+                    }
+                    setIsSaved(!isSaved)}}
                   className={`gap-1.5 cursor-pointer ${
                     isSaved
                       ? "bg-primary text-primary-foreground"
@@ -242,15 +268,20 @@ export default function ArticleDetailPage() {
               <img
                 src={article.image}
                 alt={article.title}
+                width={1200}
+                height={460}
+                decoding="async"
                 className="w-full max-h-[460px] object-cover"
               />
             </div>
 
-            {/* Nội dung bài viết */}
+            {/* Nội dung bài viết — sanitize bằng DOMPurify để chống XSS */}
             <div
               className={`prose dark:prose-invert max-w-none space-y-4 text-foreground leading-relaxed ${fontSize}`}
               dangerouslySetInnerHTML={{
-                __html: article.content || `<p>Nội dung bài viết đang được cập nhật...</p>`,
+                __html: DOMPurify.sanitize(
+                  article.content || `<p>Nội dung bài viết đang được cập nhật...</p>`
+                ),
               }}
             />
 
@@ -268,9 +299,9 @@ export default function ArticleDetailPage() {
               </div>
             )}
 
-            {/* Khu vực Bình luận */}
+            {/* Khu vực Bình luận — key theo article để state reset khi đổi bài */}
             <div className="pt-8 border-t border-border">
-              <CommentSection articleId={article.id} />
+              <CommentSection key={article.id} article={article} />
             </div>
           </div>
 
@@ -296,7 +327,7 @@ export default function ArticleDetailPage() {
                       <h4 className="text-xs font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                         {item.title}
                       </h4>
-                      <span className="text-[11px] text-muted-foreground">{item.views} lượt xem</span>
+                      <span className="text-[11px] text-muted-foreground">{formatViews(item.views)} lượt xem</span>
                     </div>
                   </Link>
                 ))}

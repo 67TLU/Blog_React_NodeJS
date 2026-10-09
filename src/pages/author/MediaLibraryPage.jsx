@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image as ImageIcon, Upload, Copy, Check, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Upload, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const mockMediaFiles = [
@@ -9,7 +9,7 @@ const mockMediaFiles = [
 ];
 
 export default function MediaLibraryPage() {
-  const [files, setFiles] = useState(mockMediaFiles);
+  const [files] = useState(mockMediaFiles); // mock tĩnh — chưa cần setter
   const [copiedId, setCopiedId] = useState(null);
 
   const copyToClipboard = (id, url) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Megaphone, Plus, Eye, MousePointer, ToggleLeft, ToggleRight } from "lucide-react";
+import { Megaphone, Plus, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 

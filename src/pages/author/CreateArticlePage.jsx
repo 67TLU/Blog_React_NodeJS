@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-
+import FormPost from "@/components/editor/Docx";
 export default function CreateArticlePage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -15,9 +15,11 @@ export default function CreateArticlePage() {
     imageUrl: "",
     content: "",
   });
-
+  
+  const [content, setContent] = useState('');
   const handleSubmit = (e, status = "SUBMITTED") => {
     e.preventDefault();
+    setFormData({ ...formData, content: content });
     if (!formData.title || !formData.content) {
       alert("Vui lòng điền tiêu đề và nội dung bài viết!");
       return;
@@ -88,14 +90,7 @@ export default function CreateArticlePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Nội dung chi tiết *</label>
-            <Textarea
-              placeholder="Nhập nội dung bài viết ở đây..."
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="bg-card border-border text-foreground font-mono text-sm leading-relaxed"
-              rows={14}
-            />
+<FormPost setContent={setContent} content={content} />
           </div>
         </div>
 
@@ -151,5 +146,5 @@ export default function CreateArticlePage() {
 
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import PublicLayout from "@/layouts/PublicLayout";
-import { Newspaper, Award, Users, ShieldCheck } from "lucide-react";
+import { Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AboutPage() {

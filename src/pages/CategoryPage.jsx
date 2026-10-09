@@ -23,17 +23,17 @@ export default function CategoryPage() {
 
   const currentCategoryName = categoryNames[slug] || "Tất cả chuyên mục";
 
-  // Lọc bài viết theo chuyên mục
-  let filteredArticles = mockArticles.filter((item) => item.categorySlug === slug || slug === "all");
-
-  // Nếu không có bài viết trùng slug, dùng tất cả làm bài ví dụ
-  if (filteredArticles .length === 0) {
-    filteredArticles = mockArticles;
-  }
+  // Lọc bài viết theo chuyên mục — không có bài phù hợp → hiển thị empty state
+  let filteredArticles =
+    slug === "all"
+      ? mockArticles
+      : mockArticles.filter((item) => item.categorySlug === slug);
 
   // Sắp xếp bài viết theo bộ lọc
   if (activeFilter === "popular") {
-    filteredArticles = [...filteredArticles].sort((a, b) => parseFloat(b.views || 0) - parseFloat(a.views || 0));
+    filteredArticles = [...filteredArticles].sort(
+      (a, b) => (b.views || 0) - (a.views || 0)
+    );
   }
 
   return (

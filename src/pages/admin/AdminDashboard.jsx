@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Users, FileText, CheckCircle2, Clock, AlertTriangle, TrendingUp, ShieldAlert, ArrowRight } from "lucide-react";
+import { Users, FileText, Clock, AlertTriangle, TrendingUp, ShieldAlert, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

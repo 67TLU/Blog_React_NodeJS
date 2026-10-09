@@ -4,8 +4,6 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function ProtectedRoute({ children ,allowedRoles = []}) {
   const { user, loading,role } = useAuth();
-  
-  console.log("ProtectedRoute - user:", user, "| loading:", loading); 
 
   // Bước 1: Nếu AuthContext vẫn đang bận kiểm tra token, chặn lại và hiển thị loading
   if (loading) {

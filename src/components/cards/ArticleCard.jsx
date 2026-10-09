@@ -3,17 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { Clock, Share2, Bookmark, Check } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import {useAccessLogin} from "@/context/DialogProvider"
+import { useAuth } from "@/context/AuthContext";
 export default function ArticleCard({ article, variant = "default" }) {
   const navigate = useNavigate();
+  const {user} = useAuth() 
   const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const articleUrl = `/article/${article.slug || article.id}`;
   const authorProfileUrl = `/author-profile/${article.authorId || 101}`;
   const categoryUrl = `/category/${article.categorySlug || "tin-tuc"}`;
-
+const showAccessLogin = useAccessLogin()
   const handleBookmark = (e) => {
+if(!user)
+  return showAccessLogin()
     e.preventDefault();
     e.stopPropagation();
     setIsSaved(!isSaved);
@@ -110,6 +114,10 @@ export default function ArticleCard({ article, variant = "default" }) {
           <img
             src={article.image}
             alt={article.title}
+            loading="lazy"
+            decoding="async"
+            width={600}
+            height={440}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <Badge

@@ -6,6 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { User as UserIcon } from "lucide-react";
+import { Can } from "@casl/react";
+import GTranslate from "@/ulitis/GTranslate";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -36,12 +38,19 @@ export default function PublicLayout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Khắc phục triệt để lỗi web bị đơ/cứng sau khi click menu hoặc chuyển trang
+  // Reset menu khi đổi trang — "adjust state during render" theo docs React
+  // (thay vì setState trong effect → gây cascading render)
+  const [lastPath, setLastPath] = useState(location.pathname);
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname);
+    setMobileMenuOpen(false);
+    setDropdownOpen(false);
+  }
+
+  // Side-effect thuần DOM: gỡ lock scroll khi trang bị đổi (menu mở có thể để lock)
   useEffect(() => {
     document.body.style.pointerEvents = "";
     document.body.style.overflow = "";
-    setMobileMenuOpen(false);
-    setDropdownOpen(false);
   }, [location.pathname]);
 
   const handleSearch = (e) => {
@@ -84,7 +93,7 @@ export default function PublicLayout({ children }) {
               className="flex items-center gap-2 text-2xl font-black bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 bg-clip-text text-transparent cursor-pointer"
             >
               <Newspaper className="w-7 h-7 text-red-500 shrink-0" />
-              <span>MSN NEWS</span>
+              <span>{import.meta.env.VITE_NAME_WEB}</span>
             </Link>
           </div>
 
@@ -113,6 +122,7 @@ export default function PublicLayout({ children }) {
             >
               {theme === "dark" ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-blue-500" />}
             </Button>
+            <GTranslate/>
 
             {user ? (
               <>
@@ -182,12 +192,15 @@ export default function PublicLayout({ children }) {
     >
       Khu vực tác giả
     </DropdownMenuItem>
-    <DropdownMenuItem
+    <Can do="access" on="AdminDashBoard">
+          <DropdownMenuItem
       onClick={() => handleNavigate("/admin")}
       className="cursor-pointer hover:bg-muted"
     >
       Khu vực quản trị
     </DropdownMenuItem>
+    </Can>
+
     
     <DropdownMenuSeparator />
     
@@ -305,7 +318,7 @@ export default function PublicLayout({ children }) {
           <div className="space-y-2">
             <div className="flex items-center gap-2 font-black text-lg bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent">
               <Newspaper className="w-5 h-5 text-red-500" />
-              <span>MSN NEWS</span>
+              <span>{import.meta.env.VITE_NAME_WEB}</span>
             </div>
             <p className="text-muted-foreground text-xs leading-relaxed">
               Trang tin tức & blog công nghệ hàng đầu, mang đến những cập nhật sắc bén và kiến thức chuyên sâu.
@@ -350,7 +363,7 @@ export default function PublicLayout({ children }) {
           </div>
         </div>
         <div className="border-t border-border/50 py-4 text-center text-xs text-muted-foreground">
-          © 2026 MSN News Platform - Bản quyền thuộc về Tòa soạn
+          © 2026 {import.meta.env.VITE_NAME_WEB} Platform - Bản quyền thuộc về Tòa soạn
         </div>
       </footer>
     </div>

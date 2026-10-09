@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Users, Shield, UserX, UserCheck } from "lucide-react";
+import { Users, UserX, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const mockUsers = [

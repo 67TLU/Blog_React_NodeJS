@@ -126,7 +126,7 @@ export default function AdminLayout() {
             </Button>
           </Link>
         </header>
-        <main className="flex-1 p-6 max-w-6xl w-full mx-auto overflow-y-auto">
+        <main className="flex-1 p-6 max-w-8xl w-full mx-auto overflow-y-auto">
           <Outlet />
         </main>
       </div>

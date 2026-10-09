@@ -9,13 +9,33 @@ export default defineConfig({
     proxy: {
       // Khi frontend gọi proxy bắt đầu bằng '/api', Vite sẽ tự chuyển hướng
       '/api': {
-        target: 'http://localhost:3000', // Đường dẫn của backend Node.js
+        // Port backend lấy từ .env (docs/API.md dùng 4000), fallback 4000
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:4000',
         changeOrigin: true,
         secure: false,
       }}},
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"), // 2. Định nghĩa alias @ trỏ vào thư mục src
+      // import.meta.dirname — tương thích ESM ("type": "module"), thay cho __dirname
+      "@": path.resolve(import.meta.dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Tách thư viện nặng ra chunk riêng → cache được, load nhanh hơn
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("recharts") || id.includes("d3-")) return "vendor-charts";
+            if (id.includes("react-quill") || id.includes("quill")) return "vendor-editor";
+            if (id.includes("mammoth")) return "vendor-docx";
+            if (id.includes("react-router")) return "vendor-router";
+            if (id.includes("react-dom") || id.includes("/react/") || id.includes("scheduler"))
+              return "vendor-react";
+            return "vendor";
+          }
+        },
+      },
     },
   },
 })

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShieldCheck, Lock, Check, Save } from "lucide-react";
+import { ShieldCheck, Check, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const mockPermissions = [

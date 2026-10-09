@@ -173,3 +173,29 @@
     @apply bg-background text-foreground;
   }
 }
+/* Thiết lập chiều cao tối thiểu cho khung soạn thảo và sửa bo góc */
+/* Bắt buộc ẩn icon SVG cũ của thư viện để hiển thị icon Lucide sắc nét */
+.ql-snow .ql-toolbar button svg {
+  display: none !important;
+}
+
+/* Hiển thị lại các nút căn lề, thụt lề */
+.ql-snow .ql-toolbar button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sửa khoảng cách hiển thị cho ô chọn màu (Colorpicker) của Quill */
+.ql-snow .ql-picker.ql-color-picker, .ql-snow .ql-picker.ql-background-picker {
+  width: 28px !important;
+}
+
+/* Khung soạn thảo CSS chuẩn */
+.ql-container.ql-snow {
+  border: none !important;
+}
+.ql-editor {
+  min-height: 250px;
+  font-size: 14px;
+}

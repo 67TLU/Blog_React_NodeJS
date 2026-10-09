@@ -7,36 +7,20 @@ export const mockArticles = [
     category: "Thể thao",
     categorySlug: "the-thao",
     author: "VnExpress",
+    authorId: "u-author-1",
     authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80",
     publishedAt: "3 giờ trước",
+    publishedIso: "2026-10-07T08:30:00.000Z",
     image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80",
-    views: "12.5k",
+    views: 12500,
     readingTime: "4 phút đọc",
+    tags: ["ronaldo", "bong-da", "the-thao"],
     content: `
       <p>Trong một cuộc phỏng vấn mới đây, cựu cầu thủ từng thi đấu cùng Cristiano Ronaldo đã chia sẻ về những kỷ niệm thú vị trên sân tập cũng như trong các trận đấu chính thức.</p>
       <p>Theo chia sẻ, Ronaldo luôn là người tập luyện chăm chỉ nhất đội. Anh thường ở lại sau các buổi tập chính để rèn luyện thêm kỹ năng sút phạt đền và sút phạt trực tiếp.</p>
       <blockquote>"Nếu bạn muốn tranh quyền sút phạt với Ronaldo, bạn phải có một lý do cực kỳ thuyết phục hoặc đơn giản là anh ấy tự nguyện nhường cho bạn." - Cựu đồng đội chia sẻ.</blockquote>
       <p>Ngoài ra, tinh thần chuyên nghiệp và chế độ dinh dưỡng nghiêm ngặt cũng là chìa khóa giúp siêu sao này duy trì phong độ đỉnh cao trong suốt nhiều năm qua.</p>
     `,
-    comments: [
-      {
-        id: "c1",
-        user: "Nguyễn Văn A",
-        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
-        time: "1 giờ trước",
-        content: "Ronaldo luôn là hình mẫu tuyệt vời về sự nỗ lực và ý chí vươn lên!",
-        likes: 12,
-
-      },
-      {
-        id: "c2",
-        user: "Trần Thị B",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
-        time: "30 phút trước",
-        content: "Bài viết rất hay và chân thực.",
-        likes: 5,
-      },
-    ],
   },
   {
     id: "2",
@@ -46,9 +30,17 @@ export const mockArticles = [
     category: "Tin tức",
     categorySlug: "tin-tuc",
     author: "Tuổi trẻ",
+    authorId: "u-author-1",
     publishedAt: "3 ngày trước",
+    publishedIso: "2026-10-05T05:00:00.000Z",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80",
-    views: "8.2k",
+    views: 8200,
+    readingTime: "5 phút đọc",
+    tags: ["cong-dong", "chanh-chinh"],
+    content: `
+      <p>Vấn đề cán bộ, công chức ăn trưa trong giờ làm việc đang nhận được nhiều ý kiến trái chiều từ dư luận.</p>
+      <p>Một số cho rằng cần linh hoạt trong quản lý thời gian, trong khi số khác cho rằng quy định cần được thực thi nghiêm chỉnh để đảm bảo kỷ luật công vụ.</p>
+    `,
   },
   {
     id: "3",
@@ -58,9 +50,17 @@ export const mockArticles = [
     category: "Tài chính",
     categorySlug: "tai-chinh",
     author: "Căn hộ Alone",
+    authorId: "u-author-1",
     publishedAt: "Được tài trợ",
+    publishedIso: "2026-10-06T02:00:00.000Z",
     image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80",
-    views: "15.1k",
+    views: 15100,
+    readingTime: "6 phút đọc",
+    tags: ["bat-dong-san", "nha-trang"],
+    content: `
+      <p>Thị trường bất động sản ven biển Nha Trang ghi nhận lượng giao dịch tăng đột biến trong quý gần đây.</p>
+      <p>Các chuyên gia cho rằng nguồn cung hạn chế cộng với nhu cầu nghỉ dưỡng phục hồi là nguyên nhân chính.</p>
+    `,
   },
   {
     id: "4",
@@ -70,9 +70,17 @@ export const mockArticles = [
     category: "Công nghệ",
     categorySlug: "cong-nghe",
     author: "Coderabbit",
+    authorId: "u-author-1",
     publishedAt: "Được tài trợ",
+    publishedIso: "2026-10-06T09:00:00.000Z",
     image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-    views: "20.4k",
+    views: 20400,
+    readingTime: "7 phút đọc",
+    tags: ["ai", "lap-trinh", "cong-nghe"],
+    content: `
+      <p>Các công cụ hỗ trợ code review bằng AI đang ngày càng phổ biến trong các đội ngũ phát triển phần mềm.</p>
+      <p>AI đóng vai trò như một trợ lý, phát hiện mẫu code dễ sai sót, lỗ hổng bảo mật và vi phạm quy chuẩn.</p>
+    `,
   },
   {
     id: "5",
@@ -82,9 +90,17 @@ export const mockArticles = [
     category: "Thể thao",
     categorySlug: "the-thao",
     author: "Tiền Phong",
+    authorId: "u-author-1",
     publishedAt: "1 giờ trước",
+    publishedIso: "2026-10-07T10:00:00.000Z",
     image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80",
-    views: "9.8k",
+    views: 9800,
+    readingTime: "3 phút đọc",
+    tags: ["bong-da", "doi-tuyen", "the-thao"],
+    content: `
+      <p>Trả lời báo chí sau trận đấu, HLV Kim Sang-sik đã thẳng thắn nhận trách nhiệm về kết quả không như mong đợi.</p>
+      <p>"Tôi không muốn đổ lỗi cho bất kỳ ai. Các cầu thủ đã nỗ lực hết mình, phần trách nhiệm thuộc về ban huấn luyện", nhà cầm quân chia sẻ.</p>
+    `,
   },
   {
     id: "6",
@@ -95,8 +111,16 @@ export const mockArticles = [
     category: "Thời tiết",
     categorySlug: "thoi-tiet",
     author: "Trung tâm Khí tượng",
+    authorId: "u-author-1",
     publishedAt: "Hôm nay",
+    publishedIso: "2026-10-07T00:00:00.000Z",
     image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=600&q=80",
-    views: "5.3k",
+    views: 5300,
+    readingTime: "2 phút đọc",
+    tags: ["thoi-tiet", "ha-noi"],
+    content: `
+      <p>Theo Trung tâm Dự báo Khí tượng Thủy văn Quốc gia, nhiệt độ tại Hà Nội hôm nay dao động quanh 24°C, độ ẩm tương đối đạt 73%.</p>
+      <p>Khu vực miền Bắc duy trì thời tiết mát mẻ, có mưa rào rải rác vài nơi trong chiều tối.</p>
+    `,
   },
 ];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Settings, Save, Globe, ShieldCheck, Mail, Database } from "lucide-react";
+import { Settings, Save, Globe, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

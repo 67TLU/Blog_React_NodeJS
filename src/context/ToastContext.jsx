@@ -1,26 +1,46 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
-
 const ToastContext = createContext();
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+  const idRef = useRef(0); // id tăng dần — không phụ thuộc Date.now() (tránh trùng khi gọi nhanh)
+  const timeoutsRef = useRef(new Map());
 
-  const addToast = (message, type = "success", duration = 3000) => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
-
-    setTimeout(() => {
-      removeToast(id);
-    }, duration);
-  };
-
-  const removeToast = (id) => {
+  const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
+    const t = timeoutsRef.current.get(id);
+    if (t) {
+      clearTimeout(t);
+      timeoutsRef.current.delete(id);
+    }
+  }, []);
+
+  const addToast = useCallback(
+    (message, type = "success", duration = 3000) => {
+      const id = ++idRef.current;
+      setToasts((prev) => [...prev, { id, message, type }]);
+
+      const timer = setTimeout(() => {
+        removeToast(id);
+        timeoutsRef.current.delete(id);
+      }, duration);
+      timeoutsRef.current.set(id, timer);
+    },
+    [removeToast]
+  );
+
+  // Dọn toàn bộ timer khi unmount → không setState sau khi component đã tắt
+  useEffect(() => {
+    const timers = timeoutsRef.current;
+    return () => timers.forEach((t) => clearTimeout(t));
+  }, []);
+
+  // Memoize value → consumer chỉ re-render khi addToast đổi (rất hiếm)
+  const value = useMemo(() => ({ addToast }), [addToast]);
 
   return (
-    <ToastContext.Provider value={{ addToast }}>
+    <ToastContext.Provider value={value}>
       {children}
       {/* Toast Render Container */}
       <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0">

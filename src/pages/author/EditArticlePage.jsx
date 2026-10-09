@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Save, Send, ArrowLeft, Image as ImageIcon, Eye, Clock } from "lucide-react";
+import { Save, Send, ArrowLeft, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ export default function EditArticlePage() {
     "Trí tuệ nhân tạo đang bước sang một chương mới với các thế hệ chip bán dẫn đột phá..."
   );
   const [tags, setTags] = useState("AI, Tech, Semiconductor");
-  const [status, setStatus] = useState("DRAFT"); // DRAFT | PENDING | PUBLISHED
+  const [, setStatus] = useState("DRAFT"); // DRAFT | PENDING | PUBLISHED — chỉ setState, hiển thị ở badge khác
   const [lastSaved, setLastSaved] = useState("10 phút trước");
 
   const handleSaveDraft = () => {

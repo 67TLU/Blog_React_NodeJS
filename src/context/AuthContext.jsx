@@ -1,21 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 
+import mockUser from '@/data/mockUser'
 const AuthContext = createContext();
 
-const mockUser = {
-  id: "u-101",
-  name: "Quản trị viên Hệ thống",
-  email: "admin@portalnews.com",
-  role: "subscriber", // 'admin' | 'editor' | 'author' | 'subscriber'
-  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("auth-user");
-    return saved ? JSON.parse(saved) : mockUser;
+    try {
+      const saved = localStorage.getItem("auth-user");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      // localStorage/JSON hỏng → coi như chưa đăng nhập, không crash app
+      localStorage.removeItem("auth-user");
+      return null;
+    }
   });
-  const [loading, setLoading] = useState(true);
+  // localStorage đọc đồng bộ → không cần loading async ở lần đầu
+  const [loading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -23,37 +24,44 @@ export function AuthProvider({ children }) {
     } else {
       localStorage.removeItem("auth-user");
     }
-    setLoading(false); // Kết thúc trạng thái loading sau khi kiểm tra user
   }, [user]);
 
-  const login = (credentials) => {
-    // Giả lập logic Đăng nhập thành công
-    setUser(mockUser);
-  };
+  const login = useCallback((credentials) => {
+    // Mock logic đăng nhập: phải khớp cả email VÀ password
+    const matched = mockUser.find((e) => e.email === credentials.email);
+    if (matched && matched.password === credentials.password) {
+      const safeUser = { ...matched };
+      delete safeUser.password;
+      setUser(safeUser);
+      return true;
+    }
+    return false;
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
-  };
+    localStorage.removeItem("auth-user");
+  }, []);
 
   // Hàm chuyển nhanh Role để test giao diện Admin / Author / Reader
-  const switchRole = (newRole) => {
+  const switchRole = useCallback((newRole) => {
     setUser((prev) => (prev ? { ...prev, role: newRole } : null));
-  };
+  }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        role: user?.role || "guest",
-        login,
-        logout,loading,
-        switchRole,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      role: user?.role || "guest",
+      login,
+      logout,
+      loading,
+      switchRole,
+    }),
+    [user, login, logout, loading, switchRole]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

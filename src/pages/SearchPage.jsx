@@ -15,8 +15,10 @@ export default function SearchPage() {
   const [keyword, setKeyword] = useState(queryParam);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
+  const q = queryParam.trim().toLowerCase();
   const results = mockArticles.filter((item) => {
-    const matchKeyword = item.title.toLowerCase().includes(queryParam.toLowerCase());
+    const haystack = `${item.title} ${item.excerpt ?? ""} ${item.content ?? ""}`.toLowerCase();
+    const matchKeyword = q === "" || haystack.includes(q);
     const matchCategory = selectedCategory === "ALL" || item.category === selectedCategory;
     return matchKeyword && matchCategory;
   });

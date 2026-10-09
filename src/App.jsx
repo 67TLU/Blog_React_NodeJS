@@ -1,56 +1,66 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Can } from "@casl/react";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 
+// ── Lazy loading: mỗi trang là 1 chunk riêng → bundle ban đầu nhỏ hơn ──
 // Public Pages
-import HomePage from "@/pages/HomePage";
-import ArticleDetailPage from "@/pages/ArticleDetailPage";
-import CategoryPage from "@/pages/CategoryPage";
-import LoginPage from "@/pages/LoginPage";
-import RegisterPage from "@/pages/RegisterPage";
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
-import SearchPage from "@/pages/SearchPage";
-import AuthorPublicProfilePage from "@/pages/AuthorPublicProfilePage";
-import TagPage from "@/pages/TagPage";
-import AboutPage from "@/pages/AboutPage";
-import ContactPage from "@/pages/user/ContactPage";
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const ArticleDetailPage = lazy(() => import("@/pages/ArticleDetailPage"));
+const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
+const SearchPage = lazy(() => import("@/pages/SearchPage"));
+const AuthorPublicProfilePage = lazy(() => import("@/pages/AuthorPublicProfilePage"));
+const TagPage = lazy(() => import("@/pages/TagPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const ContactPage = lazy(() => import("@/pages/user/ContactPage"));
 
 // User Pages
-import BookmarksPage from "@/pages/user/BookmarksPage";
-import ReadingHistoryPage from "@/pages/user/ReadingHistoryPage";
-import NotificationsPage from "@/pages/user/NotificationsPage";
-import ProfilePage from "@/pages/user/ProfilePage";
+const BookmarksPage = lazy(() => import("@/pages/user/BookmarksPage"));
+const ReadingHistoryPage = lazy(() => import("@/pages/user/ReadingHistoryPage"));
+const NotificationsPage = lazy(() => import("@/pages/user/NotificationsPage"));
+const ProfilePage = lazy(() => import("@/pages/user/ProfilePage"));
 
 // Author Pages & Layout
-import AuthorLayout from "@/layouts/AuthorLayout";
-import AuthorDashboard from "@/pages/author/AuthorDashboard";
-import CreateArticlePage from "@/pages/author/CreateArticlePage";
-import MyArticlesPage from "@/pages/author/MyArticlesPage";
-import EditArticlePage from "@/pages/author/EditArticlePage";
-import MediaLibraryPage from "@/pages/author/MediaLibraryPage";
-import PublishSchedulePage from "@/pages/author/PublishSchedulePage";
-import ArticleAnalyticsPage from "@/pages/author/ArticleAnalyticsPage";
+const AuthorLayout = lazy(() => import("@/layouts/AuthorLayout"));
+const AuthorDashboard = lazy(() => import("@/pages/author/AuthorDashboard"));
+const CreateArticlePage = lazy(() => import("@/pages/author/CreateArticlePage"));
+const MyArticlesPage = lazy(() => import("@/pages/author/MyArticlesPage"));
+const EditArticlePage = lazy(() => import("@/pages/author/EditArticlePage"));
+const MediaLibraryPage = lazy(() => import("@/pages/author/MediaLibraryPage"));
+const PublishSchedulePage = lazy(() => import("@/pages/author/PublishSchedulePage"));
+const ArticleAnalyticsPage = lazy(() => import("@/pages/author/ArticleAnalyticsPage"));
 
 // Admin Pages & Layout
-import AdminLayout from "@/layouts/AdminLayout";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import ArticleModerationPage from "@/pages/admin/ArticleModerationPage";
-import UserManagementPage from "@/pages/admin/UserManagementPage";
-import CategoryTagManagementPage from "@/pages/admin/CategoryTagManagementPage";
-import AdsManagementPage from "@/pages/admin/AdsManagementPage";
-import AuditLogPage from "@/pages/admin/AuditLogPage";
-import MenuManagementPage from "@/pages/admin/MenuManagementPage";
-import RolePermissionsPage from "@/pages/admin/RolePermissionsPage";
-import SystemSettingsPage from "@/pages/admin/SystemSettingsPage";
+const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const ArticleModerationPage = lazy(() => import("@/pages/admin/ArticleModerationPage"));
+const UserManagementPage = lazy(() => import("@/pages/admin/UserManagementPage"));
+const CategoryTagManagementPage = lazy(() => import("@/pages/admin/CategoryTagManagementPage"));
+const AdsManagementPage = lazy(() => import("@/pages/admin/AdsManagementPage"));
+const AuditLogPage = lazy(() => import("@/pages/admin/AuditLogPage"));
+const MenuManagementPage = lazy(() => import("@/pages/admin/MenuManagementPage"));
+const RolePermissionsPage = lazy(() => import("@/pages/admin/RolePermissionsPage"));
+const SystemSettingsPage = lazy(() => import("@/pages/admin/SystemSettingsPage"));
 
 // System Pages
-import ForbiddenPage from "@/pages/system/ForbiddenPage";
-import NotFoundPage from "@/pages/system/NotFoundPage";
-import CommentSection from "./components/article/CommentSection";
-import { ArticleCardSkeleton } from "./components/cards/Skeletons";
+const ForbiddenPage = lazy(() => import("@/pages/system/ForbiddenPage"));
+const NotFoundPage = lazy(() => import("@/pages/system/NotFoundPage"));
+
+// Fallback chung khi tải chunk trang
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+    </div>
+  );
+}
 
 export default function App() {
   return (
+    <Suspense fallback={<RouteFallback />}>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
@@ -73,8 +83,15 @@ export default function App() {
       <Route path="/user/history" element={<ProtectedRoute><ReadingHistoryPage /></ProtectedRoute>} />
       <Route path="/user/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
 
-      {/* Author Studio Routes */}
-      <Route path="/author" element={<ProtectedRoute><AuthorLayout /></ProtectedRoute>}>
+      {/* Author Studio Routes — chỉ author/editor/admin */}
+      <Route
+        path="/author"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "editor", "author"]}>
+            <AuthorLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<AuthorDashboard />} />
         <Route path="articles" element={<MyArticlesPage />} />
         <Route path="create" element={<CreateArticlePage />} />
@@ -84,23 +101,119 @@ export default function App() {
         <Route path="schedule" element={<PublishSchedulePage />} />
       </Route>
 
-      {/* Admin Panel Routes */}
-      <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="articles" element={<ArticleModerationPage />} />
-        <Route path="moderation" element={<ArticleModerationPage />} />
-        <Route path="users" element={<UserManagementPage />} />
-        <Route path="categories" element={<CategoryTagManagementPage />} />
-        <Route path="menu" element={<MenuManagementPage />} />
-        <Route path="roles" element={<RolePermissionsPage />} />
-        <Route path="ads" element={<AdsManagementPage />} />
-        <Route path="logs" element={<AuditLogPage />} />
-        <Route path="system" element={<SystemSettingsPage />} />
-      </Route>
+      {/* Admin Panel Routes — chỉ admin */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+  <Route index element={<Can do="access" on="AdminDashBoard" passThrough>
+        {({ isAllowed }) =>
+          isAllowed ? <AdminDashboard /> : <Navigate to="/403" replace />
+        }
+      </Can>} />
 
+  <Route
+    path="articles"
+    element={
+      <Can do="access" on="ArticleModerationPage" passThrough>
+        {({ isAllowed }) =>
+          isAllowed ? <ArticleModerationPage /> : <Navigate to="/403" replace />
+        }
+      </Can>
+    }
+  />
+
+  <Route
+    path="moderation"
+    element={
+      <Can do="access" on="ArticleModerationPage" passThrough>
+        {({ isAllowed }) =>
+          isAllowed ? <ArticleModerationPage /> : <Navigate to="/403" replace />
+        }
+      </Can>
+    }
+  />
+
+  <Route
+    path="categories"
+    element={
+      <Can do="access" on="CategoryTagManagementPage" passThrough>
+        {({ isAllowed }) =>
+          isAllowed ? <CategoryTagManagementPage /> : <Navigate to="/403" replace />
+        }
+      </Can>
+    }
+  />
+
+  <Route
+    path="menu"
+    element={
+      <Can do="access" on="MenuManagementPage" passThrough>
+        {({ isAllowed }) =>
+          isAllowed ? <MenuManagementPage /> : <Navigate to="/403" replace />
+        }
+      </Can>
+    }
+  />
+        <Route
+          path="users"
+          element={
+            <Can do="access" on="UserManagementPage" passThrough>
+              {({ isAllowed }) =>
+                isAllowed ? <UserManagementPage /> : <Navigate to="/403" replace />
+              }
+            </Can>
+          }
+        />
+        <Route
+          path="roles"
+          element={
+            <Can do="access" on="RolePermissionsPage" passThrough>
+              {({ isAllowed }) =>
+                isAllowed ? <RolePermissionsPage /> : <Navigate to="/403" replace />
+              }
+            </Can>
+          }
+        />
+        <Route
+          path="ads"
+          element={
+            <Can do="access" on="AdsManagementPage" passThrough>
+              {({ isAllowed }) =>
+                isAllowed ? <AdsManagementPage /> : <Navigate to="/403" replace />
+              }
+            </Can>
+          }
+        />
+        <Route
+          path="logs"
+          element={
+            <Can do="access" on="AuditLogPage" passThrough>
+              {({ isAllowed }) =>
+                isAllowed ? <AuditLogPage /> : <Navigate to="/403" replace />
+              }
+            </Can>
+          }
+        />
+        <Route
+          path="system"
+          element={
+            <Can do="access" on="SystemSettingsPage" passThrough>
+              {({ isAllowed }) =>
+                isAllowed ? <SystemSettingsPage /> : <Navigate to="/403" replace />
+              }
+            </Can>
+          }
+        />
+      </Route>
       {/* Trang lỗi hệ thống */}
       <Route path="/403" element={<ForbiddenPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    </Suspense>
   );
 }

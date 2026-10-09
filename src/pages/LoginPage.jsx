@@ -1,25 +1,39 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/validate/validate";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 // Import các icon từ lucide-react
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"; 
-
+import { useToast } from "@/context/ToastContext";
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const redirect = useNavigate();
+  const location = useLocation();
+  let fromPath = location.state?.from || "/"; // Lấy đường dẫn trước đó hoặc mặc định là "/"
   const [showPassword, setShowPassword] = useState(false); // State ẩn/hiện mật khẩu
   const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      login({ email });
-      navigate("/"); 
+  const { addToast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema), // Kết nối useForm với Zod bằng JS
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const onSubmit = ({ email, password }) => {
+    const result = login({ email, password });
+    if (result) {
+      return redirect(fromPath, { replace: true }); // Chuyển hướng về đường dẫn trước đó
     }
+    addToast("Email hoặc mật khẩu không đúng", "error");
   };
 
   return (
@@ -43,7 +57,7 @@ export default function LoginPage() {
         
         <CardContent className="space-y-6">
           {/* Form đăng nhập chính */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Trường Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider ">
@@ -54,13 +68,12 @@ export default function LoginPage() {
                   <Mail className="h-4 w-4" />
                 </div>
                 <Input
-                  type="email"
+                  type="text"
                   placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="h-11  border-zinc-800 pl-10  placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
-                  required
+                  {...register("email")}
                 />
+                {errors.email && <p>{errors.email.message}</p>}
               </div>
             </div>
 
@@ -81,12 +94,12 @@ export default function LoginPage() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="h-11  border-zinc-800 pl-10 pr-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
-                  required
+                                    {...register("password")}
+
                 />
                 {/* Nút bấm ẩn hiện mật khẩu tích hợp icon Lucide */}
+                
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -94,12 +107,18 @@ export default function LoginPage() {
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
+                              {errors.password && <p>{errors.password.message}</p>}
+
               </div>
             </div>
 
             {/* Nút Submit chính */}
-            <Button type="submit" className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-              Đăng nhập tài khoản
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+            >
+              {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập tài khoản"}
             </Button>
           </form>
 

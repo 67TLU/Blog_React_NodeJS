@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import PublicLayout from "@/layouts/PublicLayout";
 import ArticleCard from "@/components/cards/ArticleCard";
 import { ArticleCardSkeleton } from "@/components/cards/Skeletons";
-import { Tag as TagIcon, Calendar, Home, ChevronRight, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Tag as TagIcon, Home, ChevronRight, Loader2, Sparkles, SearchX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { mockArticles } from "@/data/mockArticles";
@@ -11,31 +11,29 @@ import { mockArticles } from "@/data/mockArticles";
 export default function TagPage() {
   const { slug } = useParams();
   const [visibleCount, setVisibleCount] = useState(9);
-  const [loadedSlug, setLoadedSlug] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreTimer = useRef(null);
 
-  // loading được derive ngay trong render — không cần setState đồng bộ trong effect
-  const loading = loadedSlug !== slug;
-
-  // Giả lập thời gian fetch dữ liệu — hiển thị Skeleton khi đang tải
-  useEffect(() => {
-    const timer = setTimeout(() => setLoadedSlug(slug), 600);
-    return () => clearTimeout(timer);
-  }, [slug]);
+  // Cleanup timer khi rời trang
+  useEffect(() => () => clearTimeout(loadMoreTimer.current), []);
 
   // Tên tag hiển thị từ Slug
   const tagName = slug ? slug.replace(/-/g, " ").toUpperCase() : "TAG";
   const tagDisplay = slug ? slug.replace(/-/g, " ") : "tag";
 
-  // Giả lập danh sách bài có thẻ tag này
-  const filteredArticles = mockArticles;
+  // Lọc bài viết theo tag thật — slug "bong-da" khớp tag "bong-da"
+  const filteredArticles = slug
+    ? mockArticles.filter((a) =>
+        (a.tags || []).some((t) => t.toLowerCase().replace(/\s+/g, "-") === slug)
+      )
+    : mockArticles;
 
   const handleLoadMore = () => {
     setLoadingMore(true);
-    setTimeout(() => {
+    loadMoreTimer.current = setTimeout(() => {
       setVisibleCount((prev) => prev + 6);
       setLoadingMore(false);
-    }, 600);
+    }, 400);
   };
 
   return (
@@ -76,23 +74,34 @@ export default function TagPage() {
 
         {/* Danh sách bài viết — dùng ArticleCard chuẩn, Skeleton khi đang tải */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {loading ? (
-            Array.from({ length: 9 }).map((_, idx) => (
-              <ArticleCardSkeleton key={`skeleton-${idx}`} />
-            ))
-          ) : (
-            <>
-              {filteredArticles.slice(0, visibleCount).map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-              {/* Skeleton cho các bài sẽ được tải thêm */}
-              {loadingMore &&
-                Array.from({ length: 6 }).map((_, idx) => (
-                  <ArticleCardSkeleton key={`skeleton-more-${idx}`} />
-                ))}
-            </>
-          )}
+          {filteredArticles.slice(0, visibleCount).map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+          {/* Skeleton cho các bài sẽ được tải thêm */}
+          {loadingMore &&
+            Array.from({ length: 6 }).map((_, idx) => (
+              <ArticleCardSkeleton key={`skeleton-more-${idx}`} />
+            ))}
         </div>
+
+        {/* Empty state — không có bài nào gắn thẻ này */}
+        {filteredArticles.length === 0 && (
+          <div className="text-center py-16 border border-dashed border-border rounded-xl bg-muted/30">
+            <SearchX className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+            <p className="font-semibold text-foreground">
+              Không có bài viết nào gắn thẻ #{tagDisplay}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Hãy thử một thẻ khác hoặc quay về trang chủ.
+            </p>
+            <Link
+              to="/"
+              className="inline-block mt-4 text-sm font-medium text-primary hover:underline"
+            >
+              Về trang chủ
+            </Link>
+          </div>
+        )}
 
         {/* Nút Load More */}
         {visibleCount < filteredArticles.length && (

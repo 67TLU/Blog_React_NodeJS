@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FolderTree, Tag, Plus, Edit, Trash2, ChevronRight } from "lucide-react";
+import { FolderTree, Tag, Plus, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,7 +19,7 @@ const mockTags = [
 export default function CategoryTagManagementPage() {
   const [activeTab, setActiveTab] = useState("CATEGORIES"); // CATEGORIES | TAGS
   const [categories, setCategories] = useState(mockCategories);
-  const [tags, setTags] = useState(mockTags);
+  const [tags] = useState(mockTags); // mock tĩnh — chưa cần setter
 
   // State form Chuyên mục
   const [catName, setCatName] = useState("");

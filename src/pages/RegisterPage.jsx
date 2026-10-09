@@ -1,27 +1,37 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
-
+import { signUpSchema } from "@/validate/validate";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod"
+import {useToast} from "@/context/ToastContext"
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name && email && password) {
-      login({ email, name });
-      navigate("/");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const { addToast } = useToast();
+  const onSubmit = ({ username, email, password }) => {
+    // Mock đăng ký — khi có backend thì gọi API tại đây
+    if (username && email && password) {
+      addToast("Đăng ký thành công! Vui lòng đăng nhập.");
+      navigate("/login", { replace: true });
     }
   };
-
+ const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(signUpSchema), // Kết nối useForm với Zod bằng JS
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
   return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
         {/* Nền trang trí — gradient xanh nhạt + blob mờ, tự đổi theo theme */}
@@ -41,7 +51,7 @@ export default function RegisterPage() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider">Họ và tên</label>
                 <div className="relative">
@@ -51,11 +61,11 @@ export default function RegisterPage() {
                   <Input
                     type="text"
                     placeholder="Nguyễn Văn A"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    
                     className="h-11 border-zinc-800 pl-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
-                    required
+                    {...register("username")}
                   />
+                  {errors.username && <p >{errors.username.message}</p>}
                 </div>
               </div>
 
@@ -66,13 +76,13 @@ export default function RegisterPage() {
                     <Mail className="h-4 w-4" />
                   </div>
                   <Input
-                    type="email"
+                    type="text"
                     placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")} 
                     className="h-11 border-zinc-800 pl-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
-                    required
+                    
                   />
+                  {errors.email && <p >{errors.email.message}</p>}
                 </div>
               </div>
 
@@ -85,10 +95,9 @@ export default function RegisterPage() {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Tối thiểu 6 ký tự"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                     className="h-11 border-zinc-800 pl-10 pr-10 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
-                    required
+                    
                   />
                   <button
                     type="button"
@@ -97,11 +106,16 @@ export default function RegisterPage() {
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
+                   {errors.password && <p >{errors.password.message}</p>}
                 </div>
               </div>
 
-              <Button type="submit" className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]">
-                Đăng ký tài khoản
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-11 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+              >
+                {isSubmitting ? "Đang xử lý..." : "Đăng ký tài khoản"}
               </Button>
             </form>
 

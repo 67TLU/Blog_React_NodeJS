@@ -10,18 +10,18 @@ export default function NotFoundPage() {
         <FileQuestion className="w-10 h-10" />
       </div>
       <div className="space-y-2 max-w-md">
-        <h1 className="text-4xl font-black text-white font-mono">404</h1>
-        <h2 className="text-lg font-bold text-zinc-200">Không tìm thấy trang yêu cầu</h2>
+        <h1 className="text-4xl font-black ">404</h1>
+        <h2 className="text-lg font-bold ">Không tìm thấy trang yêu cầu</h2>
         <p className="text-xs text-zinc-400 leading-relaxed">
           Đường dẫn bạn truy cập không tồn tại, đã bị xóa hoặc dời sang địa chỉ khác.
         </p>
       </div>
       <div className="flex items-center gap-3 pt-2">
-        <Button variant="outline" onClick={() => window.history.back()} className="border-zinc-800 text-zinc-300 text-xs gap-1.5">
+        <Button variant="outline" onClick={() => window.history.back()} className="border-zinc-800 text-xs gap-1.5">
           <ArrowLeft className="w-3.5 h-3.5" /> Quay lại
         </Button>
         <Link to="/">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs gap-1.5">
+          <Button className="bg-blue-600 hover:bg-blue-700 font-semibold text-xs gap-1.5">
             <Home className="w-3.5 h-3.5" /> Trang chủ
           </Button>
         </Link>

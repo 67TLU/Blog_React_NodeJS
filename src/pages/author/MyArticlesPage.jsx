@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FileText, Edit, Trash2, Eye, Plus, CheckCircle, Clock, FileEdit } from "lucide-react";
+import { FileText, Edit, Trash2, Plus, CheckCircle, Clock, FileEdit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const mockAuthorArticles = [
